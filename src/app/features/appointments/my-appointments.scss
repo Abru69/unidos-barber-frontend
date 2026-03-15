@@ -1,0 +1,14 @@
+.my-appts-page { padding: 48px 0 80px; }
+.page-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 40px; gap: 16px; flex-wrap: wrap; h1 { font-size: clamp(1.8rem, 3vw, 2.5rem); margin-bottom: 4px; span { color: var(--color-gold); } } p { color: var(--color-muted); } }
+.appt-list { display: flex; flex-direction: column; gap: 12px; }
+.appt-card { display: flex; align-items: center; gap: 24px; padding: 20px 24px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); transition: var(--transition); &:hover { border-color: rgba(201,168,76,0.3); } @media (max-width: 600px) { flex-direction: column; align-items: flex-start; }
+  &__left { flex-shrink: 0; min-width: 160px; }
+  &__date { display: flex; flex-direction: column; gap: 2px; .day { font-size: 0.875rem; color: var(--color-muted); } .time { font-size: 1.1rem; font-weight: 600; color: var(--color-gold); } }
+  &__body { flex: 1; }
+  &__service { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+  &__meta { display: flex; gap: 8px; font-size: 0.8rem; color: var(--color-muted); }
+  &__right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0; } }
+.btn-cancel { background: none; border: 1px solid rgba(224,85,85,0.4); color: var(--color-danger); padding: 6px 14px; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer; transition: var(--transition); font-family: var(--font-body); &:hover:not(:disabled) { background: rgba(224,85,85,0.1); } &:disabled { opacity: 0.5; cursor: not-allowed; } }
+.appt-empty { text-align: center; padding: 80px 24px; color: var(--color-muted); span { font-size: 3rem; display: block; margin-bottom: 16px; } h3 { font-size: 1.3rem; color: var(--color-text); margin-bottom: 8px; } p { margin-bottom: 24px; } }
+.appt-skeleton { display: flex; flex-direction: column; gap: 12px; &__item { height: 88px; border-radius: var(--radius-md); background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface2) 50%, var(--color-surface) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; } }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }

@@ -1,0 +1,85 @@
+<section class="hero">
+  <div class="hero__bg" aria-hidden="true">
+    <div class="hero__grid"></div>
+    <div class="hero__glow"></div>
+  </div>
+  <div class="hero__content page-container">
+    <div class="hero__text">
+      <span class="hero__tag">✂ Unidos Barber Shop</span>
+      <h1 class="hero__title">El arte del<br><em>buen corte</em></h1>
+      <p class="hero__subtitle">Precisión, estilo y tradición en cada visita. Reserva tu cita en segundos.</p>
+      <div class="hero__actions">
+        <a routerLink="/appointments/book" class="btn btn--primary btn--lg">Reservar ahora</a>
+        <a routerLink="/services" class="btn btn--outline btn--lg">Ver servicios</a>
+      </div>
+    </div>
+    <div class="hero__visual" aria-hidden="true">
+      <div class="hero__card">
+        <div class="hero__card-img">
+          <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=500&q=80" alt="Barbero trabajando" />
+        </div>
+        <div class="hero__card-badge"><span>⭐ 4.9</span><small>+200 reseñas</small></div>
+      </div>
+      <div class="hero__floating hero__floating--1">✂</div>
+      <div class="hero__floating hero__floating--2">🪒</div>
+    </div>
+  </div>
+  <div class="hero__stats page-container">
+    <div class="stat" *ngFor="let s of stats">
+      <span class="stat__value">{{ s.value }}</span>
+      <span class="stat__label">{{ s.label }}</span>
+    </div>
+  </div>
+</section>
+
+<section class="section services-section">
+  <div class="page-container">
+    <div class="section-header">
+      <h2 class="section-title">Nuestros <span>Servicios</span></h2>
+      <p class="section-subtitle">Cada corte es una obra de arte. Elige el tuyo.</p>
+    </div>
+    <div class="services-grid" *ngIf="loadingSvc">
+      <div class="service-card service-card--skeleton" *ngFor="let i of [1,2,3,4]"></div>
+    </div>
+    <div class="services-grid" *ngIf="!loadingSvc">
+      <div class="service-card" *ngFor="let s of services()">
+        <div class="service-card__icon">{{ getIcon(s.nombre) }}</div>
+        <h3 class="service-card__name">{{ s.nombre }}</h3>
+        <p class="service-card__desc">{{ s.descripcion }}</p>
+        <div class="service-card__meta">
+          <span class="service-card__price">${{ s.precio }}</span>
+          <span class="service-card__duration">⏱ {{ s.duracionMin }} min</span>
+        </div>
+        <a routerLink="/appointments/book" class="btn btn--outline btn--sm service-card__cta">Reservar</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-banner">
+  <div class="page-container cta-banner__inner">
+    <div>
+      <h2>¿Listo para lucir <em>impecable</em>?</h2>
+      <p>Agenda tu cita hoy y descubre la diferencia.</p>
+    </div>
+    <a routerLink="/appointments/book" class="btn btn--primary btn--lg">Reservar mi cita →</a>
+  </div>
+</section>
+
+<section class="section gallery-section">
+  <div class="page-container">
+    <div class="section-header">
+      <h2 class="section-title">Nuestra <span>Galería</span></h2>
+      <p class="section-subtitle">Trabajo que habla por sí solo.</p>
+    </div>
+    <div class="gallery-grid" *ngIf="!loadingGal">
+      <div class="gallery-item" *ngFor="let img of gallery(); let i = index" [class.gallery-item--featured]="i === 0">
+        <img [src]="img.url" [alt]="img.descripcion" loading="lazy" />
+        <div class="gallery-item__overlay"><span>{{ img.descripcion }}</span></div>
+      </div>
+    </div>
+    <div class="section-footer">
+      <a routerLink="/gallery" class="btn btn--outline">Ver galería completa</a>
+    </div>
+  </div>
+</section>

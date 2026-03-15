@@ -1,0 +1,118 @@
+<div class="profile-page">
+  <div class="page-container">
+    <div class="profile-hero">
+      <div class="avatar-wrap">
+        <div class="avatar">
+          <img *ngIf="previewUrl()" [src]="previewUrl()!" alt="foto perfil" />
+          <span *ngIf="!previewUrl()">{{ initials }}</span>
+        </div>
+        <label class="avatar-edit" title="Cambiar foto">
+          📷<input type="file" accept="image/jpeg,image/png,image/webp" (change)="onPhotoChange($event)" hidden />
+        </label>
+      </div>
+      <div class="profile-hero__info">
+        <div class="profile-hero__name-row">
+          <h1>{{ user()?.nombre }}</h1>
+          <span class="role-badge" [class.role-badge--admin]="user()?.rol === 'BARBERO'">
+            {{ user()?.rol === 'BARBERO' ? '✂ Barbero' : '👤 Cliente' }}
+          </span>
+        </div>
+        <p class="profile-hero__email">{{ user()?.email }}</p>
+        <p class="profile-hero__phone" *ngIf="user()?.telefono">📞 {{ user()?.telefono }}</p>
+      </div>
+      <div class="profile-hero__stats">
+        <div class="mini-stat"><span class="mini-stat__value">{{ apptStats.total }}</span><span class="mini-stat__label">Citas</span></div>
+        <div class="mini-stat"><span class="mini-stat__value">{{ apptStats.completadas }}</span><span class="mini-stat__label">Completadas</span></div>
+        <div class="mini-stat"><span class="mini-stat__value">${{ totalGastado }}</span><span class="mini-stat__label">Invertido</span></div>
+      </div>
+    </div>
+    <div class="next-appt" *ngIf="apptStats.proxima">
+      <div class="next-appt__label">📅 Próxima cita</div>
+      <div class="next-appt__info">
+        <strong>{{ apptStats.proxima.service?.nombre }}</strong>
+        <span>{{ formatDate(apptStats.proxima.startDatetime) }} a las {{ formatTime(apptStats.proxima.startDatetime) }}</span>
+      </div>
+      <span [class]="statusClass(apptStats.proxima.estado)">{{ apptStats.proxima.estado }}</span>
+      <a routerLink="/appointments" class="btn btn--outline btn--sm">Ver citas →</a>
+    </div>
+    <div class="tabs">
+      <button class="tab" [class.tab--active]="activeTab() === 'perfil'" (click)="activeTab.set('perfil')">👤 Mi Perfil</button>
+      <button class="tab" [class.tab--active]="activeTab() === 'historial'" (click)="activeTab.set('historial')">
+        📋 Historial <span class="tab__count">{{ appointments().length }}</span>
+      </button>
+    </div>
+    <div class="tab-content" *ngIf="activeTab() === 'perfil'">
+      <div class="profile-form-wrap">
+        <div class="profile-form-card">
+          <h2>Información personal</h2>
+          <div class="saved-toast" *ngIf="saved">✓ Cambios guardados correctamente</div>
+          <form [formGroup]="form" (ngSubmit)="submit()">
+            <div class="form-field">
+              <label>Nombre completo</label>
+              <input type="text" formControlName="nombre" placeholder="Tu nombre" />
+              <span class="error-msg" *ngIf="nombre.touched && nombre.hasError('required')">El nombre es obligatorio</span>
+            </div>
+            <div class="form-field">
+              <label>Correo electrónico</label>
+              <input type="email" formControlName="email" />
+              <span class="field-hint">El correo no se puede cambiar</span>
+            </div>
+            <div class="form-field">
+              <label>Teléfono <span class="optional">(opcional)</span></label>
+              <input type="tel" formControlName="telefono" placeholder="+52 443 000 0000" />
+            </div>
+            <div class="photo-field">
+              <label>Foto de perfil</label>
+              <div class="photo-preview">
+                <div class="photo-preview__img">
+                  <img *ngIf="previewUrl()" [src]="previewUrl()!" alt="preview" />
+                  <span *ngIf="!previewUrl()">{{ initials }}</span>
+                </div>
+                <div class="photo-preview__actions">
+                  <label class="btn btn--outline btn--sm" style="cursor:pointer">
+                    📷 Cambiar foto
+                    <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onPhotoChange($event)" hidden />
+                  </label>
+                  <span class="field-hint">JPG, PNG o WebP · Máx 5MB</span>
+                </div>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn--primary" [disabled]="saving">
+                <span *ngIf="!saving">Guardar cambios</span>
+                <span *ngIf="saving" class="spinner"></span>
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="profile-side">
+          <div class="side-card">
+            <h3>Tu cuenta</h3>
+            <div class="side-card__row"><span>Rol</span><strong>{{ user()?.rol === 'BARBERO' ? 'Barbero / Admin' : 'Cliente' }}</strong></div>
+            <div class="side-card__row"><span>Email</span><strong>{{ user()?.email }}</strong></div>
+          </div>
+          <div class="side-card side-card--actions">
+            <h3>Acciones</h3>
+            <a routerLink="/appointments/book" class="btn btn--primary btn--full">+ Reservar cita</a>
+            <a routerLink="/appointments" class="btn btn--outline btn--full">Ver mis citas</a>
+            <button class="btn btn--ghost btn--full logout-btn" (click)="auth.logout()">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" *ngIf="activeTab() === 'historial'">
+      <div class="history-empty" *ngIf="!loadingAppts && appointments().length === 0">
+        <span>📭</span><h3>Sin historial aún</h3><p>Reserva tu primera cita para comenzar</p>
+        <a routerLink="/appointments/book" class="btn btn--primary">Reservar ahora</a>
+      </div>
+      <div class="history-list" *ngIf="!loadingAppts && appointments().length > 0">
+        <div class="history-item" *ngFor="let a of appointments()">
+          <div class="history-item__date"><span class="day">{{ formatDate(a.startDatetime) }}</span><span class="time">{{ formatTime(a.startDatetime) }}</span></div>
+          <div class="history-item__service"><strong>{{ a.service?.nombre ?? 'Servicio' }}</strong><span *ngIf="a.notas">"{{ a.notas }}"</span></div>
+          <div class="history-item__price">${{ a.service?.precio }}</div>
+          <div class="history-item__status"><span [class]="statusClass(a.estado)">{{ a.estado }}</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

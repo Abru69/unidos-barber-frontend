@@ -1,0 +1,48 @@
+<div class="manage-page">
+  <div class="page-container">
+    <div class="manage-header">
+      <div>
+        <a routerLink="/admin/dashboard" class="back-link">← Dashboard</a>
+        <h1>Gestión de <span>Citas</span></h1>
+        <p>{{ filtered().length }} cita(s) encontradas</p>
+      </div>
+      <a routerLink="/appointments/book" class="btn btn--primary btn--sm">+ Nueva cita</a>
+    </div>
+    <div class="filters-bar">
+      <div class="filter-tabs">
+        <button class="filter-tab" *ngFor="let s of statuses" [class.filter-tab--active]="filterStatus() === s" (click)="setStatus(s)">
+          {{ s === 'TODAS' ? 'Todas' : s }}<span class="filter-tab__count">{{ counts()[s] }}</span>
+        </button>
+      </div>
+      <div class="filter-inputs">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Buscar cliente o servicio..." [value]="searchQuery()" (input)="setSearch($event)" />
+        </div>
+        <input type="date" class="date-filter" [value]="filterDate()" (change)="setDate($event)" color-scheme="dark" />
+        <button class="btn btn--ghost btn--sm" *ngIf="filterStatus() !== 'TODAS' || filterDate() || searchQuery()" (click)="clearFilters()">✕ Limpiar</button>
+      </div>
+    </div>
+    <div class="skeleton-table" *ngIf="loading"><div class="skeleton-row" *ngFor="let i of [1,2,3,4,5]"></div></div>
+    <div class="empty-state" *ngIf="!loading && filtered().length === 0"><span>📭</span><h3>Sin resultados</h3><p>Intenta con otros filtros</p><button class="btn btn--outline btn--sm" (click)="clearFilters()">Limpiar filtros</button></div>
+    <div class="appt-table" *ngIf="!loading && filtered().length > 0">
+      <div class="appt-table__header"><span>Cliente</span><span>Servicio</span><span>Fecha y hora</span><span>Estado</span><span>Acciones</span></div>
+      <div class="appt-table__row" *ngFor="let a of filtered()">
+        <div class="cell-client">
+          <div class="client-avatar">{{ (a.user?.nombre ?? 'C')[0].toUpperCase() }}</div>
+          <div class="client-info"><strong>{{ a.user?.nombre ?? 'Cliente' }}</strong><span>{{ a.user?.email }}</span></div>
+        </div>
+        <div class="cell-service"><strong>{{ a.service?.nombre ?? '—' }}</strong><span>${{ a.service?.precio }} · {{ a.service?.duracionMin }} min</span><span *ngIf="a.notas" class="notes">"{{ a.notas }}"</span></div>
+        <div class="cell-date"><span class="date">{{ formatDate(a.startDatetime) }}</span><span class="time">{{ formatTime(a.startDatetime) }}</span></div>
+        <div class="cell-status"><span [class]="statusClass(a.estado)">{{ a.estado }}</span></div>
+        <div class="cell-actions">
+          <ng-container *ngIf="availableTransitions(a.estado).length > 0; else noActions">
+            <button *ngFor="let t of availableTransitions(a.estado)" class="action-btn" [class.action-btn--confirm]="t.value === 'CONFIRMADA'" [class.action-btn--cancel]="t.value === 'CANCELADA'" [class.action-btn--complete]="t.value === 'COMPLETADA'" [disabled]="updating === a.id" (click)="update(a.id, t.value)">{{ updating === a.id ? '...' : t.label }}</button>
+          </ng-container>
+          <ng-template #noActions><span class="no-actions">—</span></ng-template>
+        </div>
+      </div>
+    </div>
+    <div class="table-footer" *ngIf="!loading && filtered().length > 0">Mostrando <strong>{{ filtered().length }}</strong> de <strong>{{ all().length }}</strong> citas</div>
+  </div>
+</div>

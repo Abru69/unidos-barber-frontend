@@ -1,0 +1,32 @@
+<div class="manage-page">
+  <div class="page-container">
+    <div class="manage-header">
+      <div>
+        <a routerLink="/admin/dashboard" class="back-link">← Dashboard</a>
+        <h1>Horarios del <span>Negocio</span></h1>
+        <p>Configura los días y horarios de atención</p>
+      </div>
+    </div>
+    <div class="hours-skeleton" *ngIf="loading"><div class="skeleton-row" *ngFor="let i of [1,2,3,4,5,6,7]"></div></div>
+    <form [formGroup]="form" (ngSubmit)="submit()" *ngIf="!loading">
+      <div class="saved-toast" *ngIf="saved">✓ Horarios guardados correctamente</div>
+      <div class="hours-card">
+        <div class="hours-table__header"><span>Día</span><span>Activo</span><span>Apertura</span><span>Cierre</span><span>Intervalo</span></div>
+        <div formArrayName="dias">
+          <div class="hours-row" *ngFor="let _ of diasArray.controls; let i = index" [formGroupName]="i" [class.hours-row--inactive]="!dayGroup(i).get('activo')?.value">
+            <div class="hours-row__day"><span class="day-number">{{ i }}</span><span class="day-name">{{ days[i] }}</span></div>
+            <div class="hours-row__toggle"><label class="toggle"><input type="checkbox" formControlName="activo" /><span class="toggle__slider"></span></label></div>
+            <div class="hours-row__input"><input type="time" formControlName="startTime" [attr.disabled]="!dayGroup(i).get('activo')?.value ? '' : null" /></div>
+            <div class="hours-row__input"><input type="time" formControlName="endTime" [attr.disabled]="!dayGroup(i).get('activo')?.value ? '' : null" /></div>
+            <div class="hours-row__select"><select formControlName="intervaloMin" [attr.disabled]="!dayGroup(i).get('activo')?.value ? '' : null"><option *ngFor="let min of intervals" [value]="min">{{ min }} min</option></select></div>
+          </div>
+        </div>
+      </div>
+      <div class="hours-info"><span>ℹ</span><p>El intervalo define cada cuántos minutos se genera un slot de cita disponible.</p></div>
+      <div class="hours-actions">
+        <a routerLink="/admin/dashboard" class="btn btn--ghost">Cancelar</a>
+        <button type="submit" class="btn btn--primary" [disabled]="saving"><span *ngIf="!saving">Guardar horarios</span><span *ngIf="saving" class="spinner"></span></button>
+      </div>
+    </form>
+  </div>
+</div>

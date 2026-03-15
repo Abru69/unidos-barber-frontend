@@ -1,0 +1,86 @@
+<div class="book-page">
+  <div class="page-container">
+    <div class="book-header">
+      <a routerLink="/" class="book-back">← Volver</a>
+      <h1>Reservar <span>Cita</span></h1>
+      <p>Elige tu servicio, fecha y horario disponible</p>
+    </div>
+    <div class="book-success" *ngIf="success">
+      <div class="book-success__icon">✓</div>
+      <h2>¡Cita reservada!</h2>
+      <p>Tu cita está <strong>pendiente de confirmación</strong>.<br>Te redirigimos a tus citas...</p>
+    </div>
+    <div class="book-layout" *ngIf="!success">
+      <div class="steps">
+        <div class="step" [class.step--active]="step() >= 1" [class.step--done]="step() > 1"><span class="step__num">1</span><span class="step__label">Servicio</span></div>
+        <div class="step__line" [class.step__line--done]="step() > 1"></div>
+        <div class="step" [class.step--active]="step() >= 2" [class.step--done]="step() > 2"><span class="step__num">2</span><span class="step__label">Fecha y hora</span></div>
+        <div class="step__line" [class.step__line--done]="step() > 2"></div>
+        <div class="step" [class.step--active]="step() >= 3"><span class="step__num">3</span><span class="step__label">Confirmar</span></div>
+      </div>
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="book-body">
+          <!-- Paso 1 -->
+          <div class="book-step" [class.book-step--active]="step() === 1">
+            <h2 class="book-step__title">¿Qué servicio deseas?</h2>
+            <div class="service-list">
+              <div class="service-opt" *ngFor="let s of services()" [class.service-opt--selected]="form.get('serviceId')?.value === s.id" (click)="selectService(s)">
+                <div class="service-opt__info"><strong>{{ s.nombre }}</strong><span>{{ s.descripcion }}</span></div>
+                <div class="service-opt__meta"><span class="price">${{ s.precio }}</span><span class="duration">⏱ {{ s.duracionMin }} min</span></div>
+              </div>
+            </div>
+            <div class="book-step__actions">
+              <button type="button" class="btn btn--primary" [disabled]="!form.get('serviceId')?.value" (click)="goStep(2)">Continuar →</button>
+            </div>
+          </div>
+          <!-- Paso 2 -->
+          <div class="book-step" [class.book-step--active]="step() === 2">
+            <h2 class="book-step__title">Elige fecha y horario</h2>
+            <div class="form-field">
+              <label>Fecha</label>
+              <input type="date" formControlName="date" [min]="today" (change)="onDateChange()" />
+            </div>
+            <div class="slots-wrap" *ngIf="form.get('date')?.value">
+              <label class="slots-label">Horarios disponibles <span *ngIf="selected()"> — {{ selected()!.duracionMin }} min c/u</span></label>
+              <div class="slots-empty" *ngIf="slots().length === 0">😔 No hay horarios disponibles para este día</div>
+              <div class="slots-grid" *ngIf="slots().length > 0">
+                <button type="button" class="slot" *ngFor="let slot of slots()"
+                  [class.slot--selected]="form.get('time')?.value === slot.time"
+                  [class.slot--occupied]="slot.occupied" [disabled]="slot.occupied" (click)="selectSlot(slot)">
+                  {{ slot.label }}
+                </button>
+              </div>
+            </div>
+            <div class="book-step__actions">
+              <button type="button" class="btn btn--ghost" (click)="goStep(1)">← Atrás</button>
+              <button type="button" class="btn btn--primary" [disabled]="!form.get('time')?.value" (click)="goStep(3)">Continuar →</button>
+            </div>
+          </div>
+          <!-- Paso 3 -->
+          <div class="book-step" [class.book-step--active]="step() === 3">
+            <h2 class="book-step__title">Confirma tu cita</h2>
+            <div class="summary">
+              <div class="summary__row"><span>Servicio</span><strong>{{ selected()?.nombre }}</strong></div>
+              <div class="summary__row"><span>Fecha</span><strong>{{ selectedDateLabel }}</strong></div>
+              <div class="summary__row"><span>Hora</span><strong>{{ selectedSlotLabel }}</strong></div>
+              <div class="summary__row"><span>Duración</span><strong>{{ selected()?.duracionMin }} min</strong></div>
+              <div class="summary__row summary__row--total"><span>Total</span><strong>${{ selected()?.precio }}</strong></div>
+            </div>
+            <div class="form-field">
+              <label>Notas adicionales <span class="optional">(opcional)</span></label>
+              <textarea formControlName="notas" rows="3" placeholder="Ej: quiero degradado alto..."></textarea>
+            </div>
+            <div *ngIf="error" class="book-error">⚠ {{ error }}</div>
+            <div class="book-step__actions">
+              <button type="button" class="btn btn--ghost" (click)="goStep(2)">← Atrás</button>
+              <button type="submit" class="btn btn--primary" [disabled]="loading">
+                <span *ngIf="!loading">✓ Confirmar cita</span>
+                <span *ngIf="loading" class="spinner"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

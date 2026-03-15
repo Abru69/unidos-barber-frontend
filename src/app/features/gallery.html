@@ -1,0 +1,41 @@
+<div class="gallery-page" (keydown)="onKey($event)" tabindex="0">
+  <div class="page-container">
+    <div class="gallery-header">
+      <span class="gallery-tag">✂ Nuestro trabajo</span>
+      <h1>Galería <span>Unidos</span></h1>
+      <p>Cada corte cuenta una historia. Aquí las nuestras.</p>
+    </div>
+    <div class="gallery-grid" *ngIf="loading">
+      <div class="gallery-item gallery-item--skeleton" *ngFor="let i of [1,2,3,4,5,6]"></div>
+    </div>
+    <div class="gallery-grid" *ngIf="!loading">
+      <div class="gallery-item" *ngFor="let img of images(); let i = index"
+        [class.gallery-item--featured]="i === 0" (click)="openLightbox(img, i)">
+        <img [src]="img.url" [alt]="img.descripcion" loading="lazy" />
+        <div class="gallery-item__overlay">
+          <span class="gallery-item__zoom">🔍</span>
+          <span class="gallery-item__desc">{{ img.descripcion }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="gallery-cta">
+      <h2>¿Quieres lucir así?</h2>
+      <p>Reserva tu cita y déjanos hacer el resto.</p>
+      <a routerLink="/appointments/book" class="btn btn--primary btn--lg">Reservar ahora →</a>
+    </div>
+  </div>
+</div>
+<div class="lightbox" *ngIf="lightbox()" (click)="closeLightbox()">
+  <div class="lightbox__inner" (click)="$event.stopPropagation()">
+    <button class="lightbox__close" (click)="closeLightbox()">✕</button>
+    <button class="lightbox__nav lightbox__nav--prev" (click)="prev()">‹</button>
+    <div class="lightbox__img-wrap">
+      <img [src]="lightbox()!.url" [alt]="lightbox()!.descripcion" />
+    </div>
+    <button class="lightbox__nav lightbox__nav--next" (click)="next()">›</button>
+    <div class="lightbox__caption">
+      <span>{{ lightbox()!.descripcion }}</span>
+      <span class="lightbox__counter">{{ activeIdx() + 1 }} / {{ images().length }}</span>
+    </div>
+  </div>
+</div>

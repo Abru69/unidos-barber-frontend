@@ -1,0 +1,33 @@
+<div class="services-page">
+  <div class="page-container">
+    <div class="services-header">
+      <span class="services-tag">✂ Lo que ofrecemos</span>
+      <h1>Nuestros <span>Servicios</span></h1>
+      <p>Cada servicio está diseñado para que salgas sintiéndote en tu mejor versión.</p>
+    </div>
+    <div class="services-grid" *ngIf="loading">
+      <div class="service-card service-card--skeleton" *ngFor="let i of [1,2,3,4]"></div>
+    </div>
+    <div class="services-grid" *ngIf="!loading">
+      <div class="service-card" *ngFor="let s of services()">
+        <div class="service-card__icon">{{ getIcon(s.nombre) }}</div>
+        <div class="service-card__body">
+          <h2>{{ s.nombre }}</h2>
+          <p>{{ s.descripcion }}</p>
+        </div>
+        <div class="service-card__footer">
+          <div class="service-card__meta">
+            <span class="price">${{ s.precio }}</span>
+            <span class="duration">⏱ {{ s.duracionMin }} min</span>
+          </div>
+          <a routerLink="/appointments/book" class="btn btn--primary btn--sm">Reservar</a>
+        </div>
+      </div>
+    </div>
+    <div class="services-cta">
+      <h2>¿Listo para lucir impecable?</h2>
+      <p>Reserva tu cita hoy.</p>
+      <a routerLink="/appointments/book" class="btn btn--primary btn--lg">Reservar cita →</a>
+    </div>
+  </div>
+</div>

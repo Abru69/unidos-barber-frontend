@@ -1,0 +1,45 @@
+<div class="my-appts-page">
+  <div class="page-container">
+    <div class="page-head">
+      <div>
+        <h1>Mis <span>Citas</span></h1>
+        <p>Historial y citas próximas</p>
+      </div>
+      <a routerLink="/appointments/book" class="btn btn--primary">+ Nueva cita</a>
+    </div>
+    <div class="appt-skeleton" *ngIf="loading">
+      <div class="appt-skeleton__item" *ngFor="let i of [1,2,3]"></div>
+    </div>
+    <div class="appt-empty" *ngIf="!loading && appointments().length === 0">
+      <span>📅</span>
+      <h3>Sin citas aún</h3>
+      <p>Reserva tu primera cita y luce impecable</p>
+      <a routerLink="/appointments/book" class="btn btn--primary">Reservar ahora</a>
+    </div>
+    <div class="appt-list" *ngIf="!loading && appointments().length > 0">
+      <div class="appt-card" *ngFor="let a of appointments()">
+        <div class="appt-card__left">
+          <div class="appt-card__date">
+            <span class="day">{{ formatDate(a.startDatetime) }}</span>
+            <span class="time">{{ formatTime(a.startDatetime) }}</span>
+          </div>
+        </div>
+        <div class="appt-card__body">
+          <div class="appt-card__service">{{ a.service?.nombre ?? 'Servicio' }}</div>
+          <div class="appt-card__meta">
+            <span>${{ a.service?.precio }}</span>
+            <span>·</span>
+            <span>{{ a.service?.duracionMin }} min</span>
+            <span *ngIf="a.notas">· "{{ a.notas }}"</span>
+          </div>
+        </div>
+        <div class="appt-card__right">
+          <span [class]="statusClass(a.estado)">{{ a.estado }}</span>
+          <button *ngIf="canCancel(a)" class="btn-cancel" [disabled]="cancelling === a.id" (click)="cancel(a.id)">
+            {{ cancelling === a.id ? '...' : 'Cancelar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

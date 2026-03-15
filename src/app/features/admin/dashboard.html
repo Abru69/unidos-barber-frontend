@@ -1,0 +1,70 @@
+<div class="admin-page">
+  <div class="page-container">
+    <div class="admin-header">
+      <div>
+        <span class="admin-tag">Panel Admin</span>
+        <h1>Dashboard <span>Unidos</span></h1>
+        <p>Gestión de citas y servicios en tiempo real</p>
+      </div>
+      <div class="admin-header__actions">
+        <a routerLink="/appointments/book" class="btn btn--outline btn--sm">+ Nueva cita</a>
+        <a routerLink="/admin/services" class="btn btn--primary btn--sm">Gestionar servicios</a>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-card__icon stat-card__icon--gold">📅</div><div class="stat-card__info"><span class="stat-card__value">{{ stats().total }}</span><span class="stat-card__label">Total citas</span></div></div>
+      <div class="stat-card stat-card--highlight"><div class="stat-card__icon">⏳</div><div class="stat-card__info"><span class="stat-card__value">{{ stats().pendientes }}</span><span class="stat-card__label">Pendientes</span></div></div>
+      <div class="stat-card"><div class="stat-card__icon stat-card__icon--green">✓</div><div class="stat-card__info"><span class="stat-card__value">{{ stats().confirmadas }}</span><span class="stat-card__label">Confirmadas</span></div></div>
+      <div class="stat-card"><div class="stat-card__icon stat-card__icon--blue">☀</div><div class="stat-card__info"><span class="stat-card__value">{{ stats().hoy }}</span><span class="stat-card__label">Hoy</span></div></div>
+    </div>
+    <div class="admin-grid">
+      <section class="admin-section">
+        <div class="admin-section__head"><h2>⏳ Citas Pendientes</h2><span class="badge badge--pendiente">{{ pending.length }}</span></div>
+        <div *ngIf="loading" class="skeleton-list"><div class="skeleton-item" *ngFor="let i of [1,2,3]"></div></div>
+        <div class="empty-state" *ngIf="!loading && pending.length === 0"><span>🎉</span><p>No hay citas pendientes</p></div>
+        <div class="appt-list" *ngIf="!loading && pending.length > 0">
+          <div class="appt-item" *ngFor="let a of pending">
+            <div class="appt-item__time"><span class="date">{{ formatDate(a.startDatetime) }}</span><span class="time">{{ formatTime(a.startDatetime) }}</span></div>
+            <div class="appt-item__info"><strong>{{ a.user?.nombre ?? 'Cliente' }}</strong><span>{{ a.service?.nombre }} · ${{ a.service?.precio }}</span><span *ngIf="a.notas" class="appt-item__notes">"{{ a.notas }}"</span></div>
+            <div class="appt-item__actions">
+              <button class="btn-action btn-action--confirm" [disabled]="updating === a.id" (click)="confirm(a.id)">{{ updating === a.id ? '...' : '✓ Aceptar' }}</button>
+              <button class="btn-action btn-action--cancel" [disabled]="updating === a.id" (click)="cancel(a.id)">✕</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="admin-section">
+        <div class="admin-section__head"><h2>✅ Próximas Confirmadas</h2><span class="badge badge--confirmada">{{ upcoming.length }}</span></div>
+        <div class="empty-state" *ngIf="!loading && upcoming.length === 0"><span>📭</span><p>No hay citas confirmadas próximas</p></div>
+        <div class="appt-list" *ngIf="!loading">
+          <div class="appt-item" *ngFor="let a of upcoming">
+            <div class="appt-item__time"><span class="date">{{ formatDate(a.startDatetime) }}</span><span class="time">{{ formatTime(a.startDatetime) }}</span></div>
+            <div class="appt-item__info"><strong>{{ a.user?.nombre ?? 'Cliente' }}</strong><span>{{ a.service?.nombre }} · ${{ a.service?.precio }}</span></div>
+            <div class="appt-item__actions"><button class="btn-action btn-action--complete" [disabled]="updating === a.id" (click)="complete(a.id)">{{ updating === a.id ? '...' : '★ Completar' }}</button></div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <section class="admin-section admin-section--full">
+      <div class="admin-section__head"><h2>✂ Servicios Activos</h2><a routerLink="/admin/services" class="btn btn--outline btn--sm">Gestionar →</a></div>
+      <div class="services-table">
+        <div class="services-table__row services-table__row--header"><span>Servicio</span><span>Duración</span><span>Precio</span><span>Estado</span></div>
+        <div class="services-table__row" *ngFor="let s of services()">
+          <span class="svc-name">{{ s.nombre }}</span>
+          <span class="svc-meta">{{ s.duracionMin }} min</span>
+          <span class="svc-price">${{ s.precio }}</span>
+          <span><span class="badge" [class.badge--confirmada]="s.activo" [class.badge--cancelada]="!s.activo">{{ s.activo ? 'Activo' : 'Inactivo' }}</span></span>
+        </div>
+      </div>
+    </section>
+    <section class="quick-links">
+      <h2>Accesos rápidos</h2>
+      <div class="quick-links__grid">
+        <a routerLink="/admin/appointments" class="quick-link"><span>📋</span><strong>Todas las citas</strong><p>Ver y gestionar historial completo</p></a>
+        <a routerLink="/admin/services" class="quick-link"><span>✂</span><strong>Servicios</strong><p>Crear, editar y desactivar servicios</p></a>
+        <a routerLink="/admin/gallery" class="quick-link"><span>🖼</span><strong>Galería</strong><p>Subir y administrar fotos</p></a>
+        <a routerLink="/admin/hours" class="quick-link"><span>🕐</span><strong>Horarios</strong><p>Configurar días y horarios</p></a>
+      </div>
+    </section>
+  </div>
+</div>

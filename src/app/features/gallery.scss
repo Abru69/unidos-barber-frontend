@@ -1,0 +1,25 @@
+.gallery-page { padding: 48px 0 80px; min-height: 100vh; outline: none; }
+.gallery-header { text-align: center; margin-bottom: 56px;
+  .gallery-tag { display: inline-block; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-gold); background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.2); padding: 6px 16px; border-radius: 100px; margin-bottom: 20px; }
+  h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); margin-bottom: 12px; span { color: var(--color-gold); } }
+  p { color: var(--color-muted); max-width: 480px; margin: 0 auto; } }
+.gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 260px; gap: 12px; margin-bottom: 72px; @media (max-width: 768px) { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 200px; } @media (max-width: 480px) { grid-template-columns: 1fr; grid-auto-rows: 240px; } }
+.gallery-item { position: relative; border-radius: var(--radius-md); overflow: hidden; cursor: pointer;
+  &--featured { grid-column: span 2; grid-row: span 2; @media (max-width: 768px) { grid-column: span 1; grid-row: span 1; } }
+  &--skeleton { background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface2) 50%, var(--color-surface) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+  img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; display: block; }
+  &__overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 50%, transparent 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; gap: 8px; padding: 20px; }
+  &__zoom { font-size: 1.8rem; transform: scale(0.8); transition: transform 0.3s ease; }
+  &__desc { position: absolute; bottom: 16px; left: 16px; right: 16px; color: #fff; font-size: 0.875rem; font-weight: 500; text-align: left; }
+  &:hover { img { transform: scale(1.06); } .gallery-item__overlay { opacity: 1; } .gallery-item__zoom { transform: scale(1); } } }
+.gallery-cta { text-align: center; padding: 64px 24px; background: linear-gradient(135deg, var(--color-surface) 0%, rgba(201,168,76,0.06) 100%); border: 1px solid var(--color-border); border-radius: var(--radius-lg); h2 { font-size: clamp(1.8rem, 3vw, 2.5rem); margin-bottom: 12px; } p { color: var(--color-muted); margin-bottom: 32px; } }
+.btn--lg { padding: 16px 36px; font-size: 0.9rem; }
+.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(8px); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 24px; animation: fadeIn 0.2s ease;
+  &__inner { position: relative; display: flex; flex-direction: column; align-items: center; max-width: 900px; width: 100%; gap: 16px; }
+  &__img-wrap { width: 100%; max-height: 70vh; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--color-border); img { width: 100%; height: 100%; object-fit: contain; max-height: 70vh; display: block; } }
+  &__close { position: absolute; top: -16px; right: -16px; width: 40px; height: 40px; border-radius: 50%; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); z-index: 1; &:hover { background: var(--color-danger); border-color: var(--color-danger); color: #fff; } }
+  &__nav { position: absolute; top: 50%; transform: translateY(-60%); width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 1.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); line-height: 1; &:hover { background: rgba(201,168,76,0.2); border-color: var(--color-gold); } &--prev { left: -64px; } &--next { right: -64px; } @media (max-width: 768px) { &--prev { left: 8px; } &--next { right: 8px; } } }
+  &__caption { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 4px; span { font-size: 0.875rem; color: var(--color-muted); } }
+  &__counter { font-family: var(--font-display); font-size: 0.9rem; color: var(--color-gold) !important; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }

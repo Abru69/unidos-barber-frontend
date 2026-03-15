@@ -1,0 +1,31 @@
+.admin-page { padding: 48px 0 80px; min-height: 100vh; }
+.admin-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; gap: 16px; flex-wrap: wrap;
+  .admin-tag { display: inline-block; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-gold); background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.2); padding: 4px 12px; border-radius: 100px; margin-bottom: 12px; }
+  h1 { font-size: clamp(1.8rem, 3vw, 2.5rem); margin-bottom: 4px; span { color: var(--color-gold); } }
+  p { color: var(--color-muted); font-size: 0.9rem; }
+  &__actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; } }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); } @media (max-width: 480px) { grid-template-columns: 1fr; } }
+.stat-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 24px; display: flex; align-items: center; gap: 16px; transition: var(--transition); &:hover { border-color: rgba(201,168,76,0.3); transform: translateY(-2px); } &--highlight { border-color: rgba(201,168,76,0.3); background: rgba(201,168,76,0.05); }
+  &__icon { font-size: 1.8rem; width: 52px; height: 52px; border-radius: var(--radius-md); background: var(--color-surface2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; &--gold { background: rgba(201,168,76,0.15); } &--green { background: rgba(76,175,125,0.15); } &--blue { background: rgba(100,150,255,0.15); } }
+  &__info { display: flex; flex-direction: column; gap: 2px; }
+  &__value { font-family: var(--font-display); font-size: 2rem; font-weight: 900; line-height: 1; color: var(--color-gold); }
+  &__label { font-size: 0.8rem; color: var(--color-muted); } }
+.admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; @media (max-width: 768px) { grid-template-columns: 1fr; } }
+.admin-section { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden; &--full { margin-bottom: 24px; }
+  &__head { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--color-border); h2 { font-size: 1rem; font-weight: 600; font-family: var(--font-body); } } }
+.appt-list { display: flex; flex-direction: column; }
+.appt-item { display: flex; align-items: center; gap: 16px; padding: 16px 24px; border-bottom: 1px solid var(--color-border); transition: var(--transition); &:last-child { border-bottom: none; } &:hover { background: rgba(255,255,255,0.02); }
+  &__time { flex-shrink: 0; min-width: 100px; display: flex; flex-direction: column; gap: 2px; .date { font-size: 0.75rem; color: var(--color-muted); } .time { font-size: 0.95rem; font-weight: 600; color: var(--color-gold); } }
+  &__info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; strong { font-size: 0.9rem; } span { font-size: 0.8rem; color: var(--color-muted); } }
+  &__notes { font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  &__actions { display: flex; gap: 8px; flex-shrink: 0; } }
+.btn-action { padding: 7px 14px; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 500; font-family: var(--font-body); cursor: pointer; border: 1px solid transparent; transition: var(--transition); white-space: nowrap; &:disabled { opacity: 0.5; cursor: not-allowed; } &--confirm { background: rgba(76,175,125,0.15); border-color: rgba(76,175,125,0.3); color: var(--color-success); &:hover:not(:disabled) { background: rgba(76,175,125,0.25); } } &--cancel { background: rgba(224,85,85,0.1); border-color: rgba(224,85,85,0.3); color: var(--color-danger); &:hover:not(:disabled) { background: rgba(224,85,85,0.2); } } &--complete { background: rgba(201,168,76,0.1); border-color: rgba(201,168,76,0.3); color: var(--color-gold); &:hover:not(:disabled) { background: rgba(201,168,76,0.2); } } }
+.services-table { &__row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; align-items: center; padding: 14px 24px; border-bottom: 1px solid var(--color-border); gap: 16px; &:last-child { border-bottom: none; } &--header { background: rgba(255,255,255,0.02); span { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-muted); } } } .svc-name { font-weight: 600; font-size: 0.9rem; } .svc-meta { font-size: 0.85rem; color: var(--color-muted); } .svc-price { font-family: var(--font-display); font-weight: 700; color: var(--color-gold); } }
+.quick-links { h2 { font-size: 1.1rem; margin-bottom: 20px; color: var(--color-muted); font-family: var(--font-body); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+  &__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); } @media (max-width: 480px) { grid-template-columns: 1fr; } } }
+.quick-link { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 24px 20px; display: flex; flex-direction: column; gap: 8px; transition: var(--transition); cursor: pointer; span { font-size: 1.8rem; } strong { font-size: 0.95rem; } p { font-size: 0.8rem; color: var(--color-muted); line-height: 1.5; } &:hover { border-color: var(--color-gold); transform: translateY(-2px); box-shadow: var(--shadow-gold); } }
+.empty-state { padding: 40px 24px; text-align: center; color: var(--color-muted); span { font-size: 2rem; display: block; margin-bottom: 8px; } p { font-size: 0.875rem; } }
+.skeleton-list { display: flex; flex-direction: column; gap: 1px; }
+.skeleton-item { height: 72px; background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface2) 50%, var(--color-surface) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+.btn--sm { padding: 8px 18px; font-size: 0.78rem; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }

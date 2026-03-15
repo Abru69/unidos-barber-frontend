@@ -1,1 +1,67 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --color-bg:        #0f0f0f;
+  --color-surface:   #1a1a1a;
+  --color-surface2:  #242424;
+  --color-border:    #2e2e2e;
+  --color-gold:      #c9a84c;
+  --color-gold-light:#e4c87a;
+  --color-text:      #f0ede6;
+  --color-muted:     #7a7670;
+  --color-danger:    #e05555;
+  --color-success:   #4caf7d;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Sans', sans-serif;
+  --radius-sm:  4px;
+  --radius-md:  8px;
+  --radius-lg:  16px;
+  --shadow-gold: 0 0 24px rgba(201, 168, 76, 0.15);
+  --transition:  all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; color: var(--color-text); }
+a { color: inherit; text-decoration: none; transition: var(--transition); }
+img { max-width: 100%; display: block; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 28px; border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-weight: 500; font-size: 0.9rem;
+  letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer;
+  border: none; transition: var(--transition);
+  &--primary { background: var(--color-gold); color: #0f0f0f;
+    &:hover { background: var(--color-gold-light); transform: translateY(-1px); box-shadow: var(--shadow-gold); } }
+  &--outline { background: transparent; color: var(--color-gold); border: 1px solid var(--color-gold);
+    &:hover { background: var(--color-gold); color: #0f0f0f; } }
+  &--ghost { background: transparent; color: var(--color-text); &:hover { color: var(--color-gold); } }
+  &:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+}
+.page-container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 80px 0; }
+.section-title { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; margin-bottom: 12px;
+  span { color: var(--color-gold); } }
+.section-subtitle { color: var(--color-muted); font-size: 1rem; margin-bottom: 48px; }
+.card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 24px; transition: var(--transition);
+  &:hover { border-color: var(--color-gold); box-shadow: var(--shadow-gold); } }
+.badge { display: inline-block; padding: 4px 12px; border-radius: 100px; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;
+  &--pendiente  { background: rgba(201,168,76,0.15); color: var(--color-gold); }
+  &--confirmada { background: rgba(76,175,125,0.15); color: var(--color-success); }
+  &--cancelada  { background: rgba(224,85,85,0.15);  color: var(--color-danger); }
+  &--completada { background: rgba(100,100,255,0.15);color: #8888ff; }
+  &--reprogramada { background: rgba(100,150,255,0.15); color: #8aabff; } }
+.form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px;
+  label { font-size: 0.8rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-muted); }
+  input, select, textarea { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); color: var(--color-text); font-family: var(--font-body); font-size: 0.95rem; padding: 12px 16px; outline: none; transition: var(--transition); width: 100%;
+    &:focus { border-color: var(--color-gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.1); }
+    &::placeholder { color: var(--color-muted); } }
+  .error-msg { font-size: 0.8rem; color: var(--color-danger); } }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; &:hover { background: var(--color-gold); } }

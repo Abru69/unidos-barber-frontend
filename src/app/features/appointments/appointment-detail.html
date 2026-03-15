@@ -1,0 +1,55 @@
+<div class="detail-page">
+  <div class="page-container">
+    <div class="detail-skeleton" *ngIf="loading"><div class="skeleton-block skeleton-block--tall"></div></div>
+    <ng-container *ngIf="!loading && appointment()">
+      <a routerLink="/appointments" class="back-link">← Mis citas</a>
+      <div class="detail-layout">
+        <div class="detail-card">
+          <div class="detail-card__header">
+            <div class="detail-card__title-row">
+              <h1>{{ appointment()!.service?.nombre }}</h1>
+              <span [class]="statusClass(appointment()!.estado)">{{ appointment()!.estado }}</span>
+            </div>
+            <p class="detail-card__id">ID: {{ appointment()!.id }}</p>
+          </div>
+          <div class="detail-card__body">
+            <div class="info-row"><span class="info-row__label">📅 Fecha</span><span class="info-row__value">{{ formatDate(appointment()!.startDatetime) }}</span></div>
+            <div class="info-row"><span class="info-row__label">🕐 Hora</span><span class="info-row__value">{{ formatTime(appointment()!.startDatetime) }} — {{ formatTime(appointment()!.endDatetime) }}</span></div>
+            <div class="info-row"><span class="info-row__label">⏱ Duración</span><span class="info-row__value">{{ appointment()!.service?.duracionMin }} minutos</span></div>
+            <div class="info-row"><span class="info-row__label">💰 Precio</span><span class="info-row__value info-row__value--price">${{ appointment()!.service?.precio }}</span></div>
+            <div class="info-row" *ngIf="appointment()!.notas"><span class="info-row__label">📝 Notas</span><span class="info-row__value">{{ appointment()!.notas }}</span></div>
+          </div>
+          <div class="detail-card__actions">
+            <ng-container *ngIf="!isAdmin">
+              <a routerLink="/appointments" class="btn btn--ghost">← Volver</a>
+              <button *ngIf="canCancel(appointment()!)" class="btn btn--danger" [disabled]="cancelling" (click)="cancel()">
+                <span *ngIf="!cancelling">✕ Cancelar cita</span>
+                <span *ngIf="cancelling" class="spinner"></span>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="isAdmin">
+              <a routerLink="/admin/appointments" class="btn btn--ghost">← Citas</a>
+              <button *ngIf="appointment()!.estado === 'PENDIENTE' || appointment()!.estado === 'REPROGRAMADA'" class="btn btn--confirm" [disabled]="updating !== null" (click)="updateStatus('CONFIRMADA')">{{ updating === 'CONFIRMADA' ? '...' : '✓ Confirmar' }}</button>
+              <button *ngIf="appointment()!.estado === 'CONFIRMADA'" class="btn btn--complete" [disabled]="updating !== null" (click)="updateStatus('COMPLETADA')">{{ updating === 'COMPLETADA' ? '...' : '★ Completar' }}</button>
+              <button *ngIf="canCancel(appointment()!)" class="btn btn--danger" [disabled]="updating !== null" (click)="updateStatus('CANCELADA')">{{ updating === 'CANCELADA' ? '...' : '✕ Cancelar' }}</button>
+            </ng-container>
+          </div>
+        </div>
+        <aside class="detail-side">
+          <div class="status-card">
+            <h3>Estado actual</h3>
+            <div class="status-card__estado"><span [class]="statusClass(appointment()!.estado)">{{ appointment()!.estado }}</span></div>
+            <div class="status-timeline">
+              <div class="status-step" [class.status-step--done]="['PENDIENTE','CONFIRMADA','COMPLETADA'].includes(appointment()!.estado)" [class.status-step--active]="appointment()!.estado === 'PENDIENTE'"><span class="status-step__dot"></span><span>Pendiente</span></div>
+              <div class="status-step__line"></div>
+              <div class="status-step" [class.status-step--done]="['CONFIRMADA','COMPLETADA'].includes(appointment()!.estado)" [class.status-step--active]="appointment()!.estado === 'CONFIRMADA'"><span class="status-step__dot"></span><span>Confirmada</span></div>
+              <div class="status-step__line"></div>
+              <div class="status-step" [class.status-step--done]="appointment()!.estado === 'COMPLETADA'" [class.status-step--active]="appointment()!.estado === 'COMPLETADA'"><span class="status-step__dot"></span><span>Completada</span></div>
+            </div>
+          </div>
+          <div class="side-cta"><p>¿Quieres otra cita?</p><a routerLink="/appointments/book" class="btn btn--primary btn--full">+ Reservar</a></div>
+        </aside>
+      </div>
+    </ng-container>
+  </div>
+</div>

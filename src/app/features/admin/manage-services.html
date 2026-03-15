@@ -1,0 +1,54 @@
+<div class="manage-page">
+  <div class="page-container">
+    <div class="manage-header">
+      <div>
+        <a routerLink="/admin/dashboard" class="back-link">← Dashboard</a>
+        <h1>Gestión de <span>Servicios</span></h1>
+        <p>{{ services().length }} servicio(s) registrados</p>
+      </div>
+      <button class="btn btn--primary" (click)="openCreate()">+ Nuevo servicio</button>
+    </div>
+    <div class="skeleton-grid" *ngIf="loading"><div class="skeleton-card" *ngFor="let i of [1,2,3,4]"></div></div>
+    <div class="services-grid" *ngIf="!loading">
+      <div class="service-card service-card--new" (click)="openCreate()">
+        <span class="plus">+</span><strong>Agregar servicio</strong><p>Crea un nuevo servicio para tu barbería</p>
+      </div>
+      <div class="service-card" *ngFor="let s of services()" [class.service-card--inactive]="!s.activo">
+        <div class="service-card__status-bar">
+          <span class="badge" [class.badge--confirmada]="s.activo" [class.badge--cancelada]="!s.activo">{{ s.activo ? 'Activo' : 'Inactivo' }}</span>
+          <div class="service-card__top-actions">
+            <button class="icon-btn icon-btn--edit" title="Editar" (click)="openEdit(s)">✏</button>
+            <button class="icon-btn icon-btn--delete" title="Eliminar" [disabled]="deleting === s.id" (click)="delete(s.id)">{{ deleting === s.id ? '...' : '🗑' }}</button>
+          </div>
+        </div>
+        <div class="service-card__body"><h3>{{ s.nombre }}</h3><p>{{ s.descripcion || 'Sin descripción' }}</p></div>
+        <div class="service-card__footer">
+          <div class="service-card__meta"><span class="price">${{ s.precio }}</span><span class="divider">·</span><span class="duration">⏱ {{ s.duracionMin }} min</span></div>
+          <button class="toggle-btn" (click)="toggleActivo(s)" [class.toggle-btn--on]="s.activo">{{ s.activo ? 'Desactivar' : 'Activar' }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" *ngIf="modalOpen" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal__header"><h2>{{ editingId ? 'Editar servicio' : 'Nuevo servicio' }}</h2><button class="modal__close" (click)="closeModal()">✕</button></div>
+    <div *ngIf="formError" class="form-error-banner">⚠ {{ formError }}</div>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-field"><label>Nombre del servicio *</label><input type="text" formControlName="nombre" placeholder="Ej: Corte Clásico" /><span class="error-msg" *ngIf="nombre.touched && nombre.hasError('required')">El nombre es obligatorio</span></div>
+      <div class="form-field"><label>Descripción</label><textarea formControlName="descripcion" rows="2" placeholder="Descripción breve..."></textarea></div>
+      <div class="form-row">
+        <div class="form-field"><label>Precio (MXN) *</label><input type="number" formControlName="precio" placeholder="150" min="1" /><span class="error-msg" *ngIf="precio.touched && precio.hasError('required')">El precio es obligatorio</span></div>
+        <div class="form-field"><label>Duración (min) *</label><input type="number" formControlName="duracionMin" placeholder="30" min="5" step="5" /><span class="error-msg" *ngIf="duracionMin.touched && duracionMin.hasError('required')">La duración es obligatoria</span></div>
+      </div>
+      <div class="form-field form-field--toggle">
+        <label>Estado del servicio</label>
+        <label class="toggle"><input type="checkbox" formControlName="activo" /><span class="toggle__slider"></span><span class="toggle__label">{{ form.get('activo')?.value ? 'Activo' : 'Inactivo' }}</span></label>
+      </div>
+      <div class="modal__actions">
+        <button type="button" class="btn btn--ghost" (click)="closeModal()">Cancelar</button>
+        <button type="submit" class="btn btn--primary" [disabled]="saving"><span *ngIf="!saving">{{ editingId ? 'Guardar cambios' : 'Crear servicio' }}</span><span *ngIf="saving" class="spinner"></span></button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+<div class="manage-page">
+  <div class="page-container">
+    <div class="manage-header">
+      <div>
+        <a routerLink="/admin/dashboard" class="back-link">← Dashboard</a>
+        <h1>Gestión de <span>Galería</span></h1>
+        <p>{{ images().length }} imagen(es) publicadas</p>
+      </div>
+    </div>
+    <div class="gallery-layout">
+      <aside class="upload-panel">
+        <h2>Subir imagen</h2>
+        <label class="upload-zone" [class.upload-zone--has-preview]="previewUrl()">
+          <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onFileChange($event)" hidden />
+          <ng-container *ngIf="!previewUrl()"><span class="upload-zone__icon">🖼</span><strong>Arrastra o haz click</strong><span>JPG, PNG, WebP · Máx 5MB</span></ng-container>
+          <ng-container *ngIf="previewUrl()"><img [src]="previewUrl()!" alt="preview" class="upload-preview" /></ng-container>
+        </label>
+        <div class="upload-error" *ngIf="uploadError">⚠ {{ uploadError }}</div>
+        <div class="upload-success" *ngIf="uploadOk">✓ Imagen subida correctamente</div>
+        <div class="form-field" *ngIf="previewUrl()"><label>Descripción</label><input type="text" [(ngModel)]="descripcion" placeholder="Ej: Degradado clásico" /></div>
+        <div class="upload-actions" *ngIf="previewUrl()">
+          <button class="btn btn--ghost btn--sm" (click)="clearPreview()">Cancelar</button>
+          <button class="btn btn--primary" [disabled]="uploading" (click)="upload()"><span *ngIf="!uploading">⬆ Publicar</span><span *ngIf="uploading" class="spinner"></span></button>
+        </div>
+        <p class="upload-hint" *ngIf="!previewUrl()">Las imágenes se mostrarán en la galería pública del sitio.</p>
+      </aside>
+      <div class="gallery-content">
+        <div class="gallery-grid" *ngIf="loading"><div class="gallery-item gallery-item--skeleton" *ngFor="let i of [1,2,3,4,5,6]"></div></div>
+        <div class="gallery-empty" *ngIf="!loading && images().length === 0"><span>🖼</span><h3>Sin imágenes aún</h3><p>Sube la primera foto de tu galería</p></div>
+        <div class="gallery-grid" *ngIf="!loading && images().length > 0">
+          <div class="gallery-item" *ngFor="let img of images()" [class.gallery-item--deleting]="deleting === img.id">
+            <img [src]="img.url" [alt]="img.descripcion" loading="lazy" />
+            <div class="gallery-item__overlay">
+              <span class="gallery-item__desc">{{ img.descripcion }}</span>
+              <button class="gallery-item__delete" [disabled]="deleting === img.id" (click)="delete(img.id)" title="Eliminar">{{ deleting === img.id ? '...' : '🗑' }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
