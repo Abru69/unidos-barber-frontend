@@ -67,8 +67,8 @@ export class Profile implements OnInit {
       telefono: this.form.get('telefono')!.value,
     };
 
-    // Si hay foto nueva, incluirla como base64 (temporal hasta tener S3)
-    if (this.previewUrl() && this.selectedFile) {
+    // Si hay foto nueva, incluirla como base64
+    if (this.selectedFile && this.previewUrl()) {
       updateData.fotoUrl = this.previewUrl();
     }
 
@@ -78,13 +78,12 @@ export class Profile implements OnInit {
         this.user.set(updated);
         localStorage.setItem('unidos_user', JSON.stringify(updated));
         this.auth.currentUser.set(updated);
-        this.saving = false;
-        this.saved = true;
+        this.saving = false; this.saved = true;
         this.selectedFile = null;
         setTimeout(() => this.saved = false, 3000);
       },
       error: () => {
-        // Fallback: guardar solo en local si falla el backend
+        // Fallback: guardar solo en local
         const updated: User = {
           ...this.user()!,
           nombre:   this.form.get('nombre')!.value,
@@ -94,8 +93,7 @@ export class Profile implements OnInit {
         this.user.set(updated);
         localStorage.setItem('unidos_user', JSON.stringify(updated));
         this.auth.currentUser.set(updated);
-        this.saving = false;
-        this.saved = true;
+        this.saving = false; this.saved = true;
         setTimeout(() => this.saved = false, 3000);
       }
     });
@@ -104,14 +102,11 @@ export class Profile implements OnInit {
   formatDate(iso: string) { return new Date(iso).toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }); }
   formatTime(iso: string) { return new Date(iso).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }); }
   statusClass(estado: string) { return 'badge badge--' + estado.toLowerCase(); }
-  get initials() { return (this.user()?.nombre ?? '').split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase(); }
+  get initials() { return (this.user()?.nombre ?? '').split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase(); }
   get totalGastado() { return this.appointments().filter(a => a.estado === 'COMPLETADA').reduce((s, a) => s + (a.service?.precio ?? 0), 0); }
   get apptStats() {
     const all = this.appointments();
-    return {
-      total: all.length,
-      completadas: all.filter(a => a.estado === 'COMPLETADA').length,
-      proxima: all.find(a => (a.estado === 'CONFIRMADA' || a.estado === 'PENDIENTE') && new Date(a.startDatetime) >= new Date())
-    };
+    return { total: all.length, completadas: all.filter(a => a.estado === 'COMPLETADA').length,
+      proxima: all.find(a => (a.estado === 'CONFIRMADA' || a.estado === 'PENDIENTE') && new Date(a.startDatetime) >= new Date()) };
   }
 }
