@@ -1,1 +1,60 @@
-<p>register works!</p>
+<div class="auth-page">
+  <div class="auth-page__deco" aria-hidden="true">
+    <div class="deco-content">
+      <span class="deco-icon">✂</span>
+      <h2>Tu primera cita <em>te espera</em></h2>
+      <p>Regístrate y reserva en segundos.</p>
+      <ul class="deco-perks">
+        <li>✓ Reservas en línea 24/7</li>
+        <li>✓ Recordatorios automáticos</li>
+        <li>✓ Historial de visitas</li>
+      </ul>
+    </div>
+  </div>
+  <div class="auth-page__form-wrap">
+    <div class="auth-card">
+      <div class="auth-card__header">
+        <a routerLink="/" class="auth-card__logo">✂ Unidos <em>Barber</em></a>
+        <h1>Crea tu cuenta</h1>
+        <p>Es gratis y toma menos de un minuto</p>
+      </div>
+      <div *ngIf="error" class="auth-card__error">⚠ {{ error }}</div>
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="form-field">
+          <label>Nombre completo</label>
+          <input type="text" formControlName="nombre" placeholder="Juan Pérez" />
+          <span class="error-msg" *ngIf="nombre.touched && nombre.hasError('required')">El nombre es obligatorio</span>
+        </div>
+        <div class="form-field">
+          <label>Correo electrónico</label>
+          <input type="email" formControlName="email" placeholder="tu@correo.com" />
+          <span class="error-msg" *ngIf="email.touched && email.hasError('email')">Ingresa un correo válido</span>
+        </div>
+        <div class="form-field">
+          <label>Teléfono <span class="optional">(opcional)</span></label>
+          <input type="tel" formControlName="telefono" placeholder="+52 443 000 0000" />
+        </div>
+        <div class="form-field">
+          <label>Contraseña</label>
+          <div class="input-wrap">
+            <input [type]="showPass ? 'text' : 'password'" formControlName="password" placeholder="Mínimo 8 caracteres" />
+            <button type="button" class="toggle-pass" (click)="showPass = !showPass">{{ showPass ? '🙈' : '👁' }}</button>
+          </div>
+          <div class="pass-strength" *ngIf="password.value">
+            <div class="pass-strength__bar">
+              <div class="pass-strength__fill" [style.width.%]="passStrength * 25"
+                [class.weak]="passStrength <= 1" [class.medium]="passStrength === 2 || passStrength === 3" [class.strong]="passStrength === 4"></div>
+            </div>
+            <span class="pass-strength__label">{{ ['', 'Débil', 'Regular', 'Buena', 'Fuerte'][passStrength] }}</span>
+          </div>
+          <span class="error-msg" *ngIf="password.touched && password.hasError('weak')">Debe tener 8+ caracteres, una mayúscula y un número</span>
+        </div>
+        <button type="submit" class="btn btn--primary btn--full" [disabled]="loading">
+          <span *ngIf="!loading">Crear cuenta</span>
+          <span *ngIf="loading" class="spinner"></span>
+        </button>
+      </form>
+      <p class="auth-card__footer">¿Ya tienes cuenta? <a routerLink="/auth/login">Inicia sesión</a></p>
+    </div>
+  </div>
+</div>
