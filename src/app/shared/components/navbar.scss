@@ -1,0 +1,212 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  transition: all 0.3s ease;
+  padding: 20px 0;
+
+  &--scrolled {
+    background: rgba(15, 15, 15, 0.95);
+    backdrop-filter: blur(12px);
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: 0 4px 32px rgba(0,0,0,0.4);
+  }
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  // Logo
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+
+    &-icon {
+      font-size: 1.4rem;
+      color: var(--color-gold);
+    }
+
+    &-text {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--color-text);
+      em {
+        font-style: italic;
+        color: var(--color-gold);
+      }
+    }
+
+    &:hover .navbar__logo-icon {
+      transform: rotate(-15deg);
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+  }
+
+  // Links
+  &__links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+
+    a {
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 2px;
+        left: 14px;
+        right: 14px;
+        height: 1px;
+        background: var(--color-gold);
+        transform: scaleX(0);
+        transition: transform 0.25s ease;
+      }
+
+      &:hover, &.active {
+        color: var(--color-text);
+        &::after { transform: scaleX(1); }
+      }
+
+      &.active { color: var(--color-gold); }
+    }
+
+    .admin-link {
+      color: var(--color-gold) !important;
+      border: 1px solid var(--color-border);
+    }
+  }
+
+  // Actions
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  &__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-gold);
+    color: #0f0f0f;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: var(--transition);
+
+    img { width: 100%; height: 100%; object-fit: cover; }
+
+    &:hover { border-color: var(--color-gold-light); }
+  }
+
+  // Botones pequeños en navbar
+  .btn--sm {
+    padding: 8px 18px;
+    font-size: 0.78rem;
+  }
+
+  // Hamburger
+  &__burger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    margin-left: auto;
+
+    span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--color-text);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+
+    &.open {
+      span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+      span:nth-child(2) { opacity: 0; }
+      span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    }
+  }
+
+  // Mobile menu
+  &__mobile {
+    display: none;
+    flex-direction: column;
+    padding: 16px 24px 24px;
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    gap: 4px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+
+    &--open {
+      max-height: 500px;
+    }
+
+    a, button {
+      display: block;
+      padding: 12px 8px;
+      font-size: 1rem;
+      color: var(--color-muted);
+      background: none;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      border-bottom: 1px solid var(--color-border);
+      transition: var(--transition);
+      font-family: var(--font-body);
+
+      &:hover, &.active { color: var(--color-gold); }
+      &:last-child { border-bottom: none; }
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--color-border);
+      margin: 8px 0;
+    }
+
+    .btn--primary {
+      margin-top: 12px;
+      text-align: center;
+      border-radius: var(--radius-sm);
+    }
+  }
+
+  // Responsive
+  @media (max-width: 768px) {
+    &__links, &__actions { display: none; }
+    &__burger { display: flex; }
+    &__mobile { display: flex; }
+  }
+}

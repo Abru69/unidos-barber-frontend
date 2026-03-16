@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Navbar } from './shared/components/navbar';
-import { Footer } from './shared/components/footer';
+import { NavbarComponent } from './shared/components/navbar';
+import { FooterComponent } from './shared/components/footer';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, Navbar, Footer],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent],
   template: `
     <app-navbar />
     <main class="main-content">
@@ -14,6 +14,11 @@ import { Footer } from './shared/components/footer';
     </main>
     <app-footer />
   `,
-  styles: [`.main-content { padding-top: 80px; min-height: calc(100vh - 80px); }`]
+  styles: [`
+    .main-content {
+      padding-top: 80px;
+      min-height: calc(100vh - 80px);
+    }
+  `]
 })
-export class App {}
+export class AppComponent {}

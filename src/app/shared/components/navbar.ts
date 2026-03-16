@@ -10,18 +10,30 @@ import { AuthService } from '../../core/services/auth.service';
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
 })
-export class Navbar {
+export class NavbarComponent {
   scrolled = signal(false);
   menuOpen = signal(false);
+
   user = computed(() => this.auth.currentUser());
   isAdmin = computed(() => this.auth.isAdmin());
 
   constructor(public auth: AuthService) {}
 
   @HostListener('window:scroll')
-  onScroll() { this.scrolled.set(window.scrollY > 40); }
+  onScroll() {
+    this.scrolled.set(window.scrollY > 40);
+  }
 
-  toggleMenu() { this.menuOpen.update(v => !v); }
-  closeMenu() { this.menuOpen.set(false); }
-  logout() { this.auth.logout(); this.closeMenu(); }
+  toggleMenu() {
+    this.menuOpen.update(v => !v);
+  }
+
+  closeMenu() {
+    this.menuOpen.set(false);
+  }
+
+  logout() {
+    this.auth.logout();
+    this.closeMenu();
+  }
 }

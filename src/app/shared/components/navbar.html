@@ -1,13 +1,20 @@
 <header class="navbar" [class.navbar--scrolled]="scrolled()">
   <div class="navbar__inner page-container">
+
+    <!-- Logo -->
     <a routerLink="/" class="navbar__logo" (click)="closeMenu()">
       <span class="navbar__logo-icon">✂</span>
-      <span class="navbar__logo-text">Unidos <em>Barber</em></span>
+      <span class="navbar__logo-text">
+        Unidos <em>Barber</em>
+      </span>
     </a>
+
+    <!-- Nav links (desktop) -->
     <nav class="navbar__links">
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Inicio</a>
       <a routerLink="/services" routerLinkActive="active">Servicios</a>
       <a routerLink="/gallery" routerLinkActive="active">Galería</a>
+
       @if (user()) {
         <a routerLink="/appointments" routerLinkActive="active">Mis Citas</a>
         @if (isAdmin()) {
@@ -15,13 +22,15 @@
         }
       }
     </nav>
+
+    <!-- Actions (desktop) -->
     <div class="navbar__actions">
       @if (!user()) {
         <a routerLink="/auth/login" class="btn btn--ghost btn--sm">Entrar</a>
         <a routerLink="/appointments/book" class="btn btn--primary btn--sm">Reservar</a>
       } @else {
         <a routerLink="/appointments/book" class="btn btn--primary btn--sm">+ Reservar</a>
-        <div class="navbar__avatar" [routerLink]="['/profile']">
+        <div class="navbar__avatar" [routerLink]="['/profile']" title="Mi perfil">
           @if (user()?.fotoUrl) {
             <img [src]="user()!.fotoUrl" [alt]="user()!.nombre" />
           } @else {
@@ -31,17 +40,24 @@
         <button class="btn btn--ghost btn--sm" (click)="logout()">Salir</button>
       }
     </div>
-    <button class="navbar__burger" (click)="toggleMenu()" [class.open]="menuOpen()">
+
+    <!-- Hamburger (mobile) -->
+    <button class="navbar__burger" (click)="toggleMenu()" [class.open]="menuOpen()" aria-label="Menú">
       <span></span><span></span><span></span>
     </button>
   </div>
+
+  <!-- Mobile menu -->
   <div class="navbar__mobile" [class.navbar__mobile--open]="menuOpen()">
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" (click)="closeMenu()">Inicio</a>
     <a routerLink="/services" routerLinkActive="active" (click)="closeMenu()">Servicios</a>
     <a routerLink="/gallery" routerLinkActive="active" (click)="closeMenu()">Galería</a>
+
     @if (user()) {
       <a routerLink="/appointments" routerLinkActive="active" (click)="closeMenu()">Mis Citas</a>
-      @if (isAdmin()) { <a routerLink="/admin/dashboard" (click)="closeMenu()">Panel Admin</a> }
+      @if (isAdmin()) {
+        <a routerLink="/admin/dashboard" (click)="closeMenu()">Panel Admin</a>
+      }
       <hr>
       <a routerLink="/profile" (click)="closeMenu()">Mi Perfil</a>
       <button (click)="logout()">Cerrar sesión</button>
