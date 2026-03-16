@@ -33,6 +33,14 @@ export class AuthService {
       .post<{ data: { user: User; token: string } }>(`${environment.apiUrl}/auth/login`, { email, password })
       .pipe(tap(res => this.storeSession(res.data)));
   }
+  
+  forgotPassword(email: string) {
+    return this.http.post<{ message: string }>(`${environment.apiUrl}/auth/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string) {
+    return this.http.post<{ message: string }>(`${environment.apiUrl}/auth/reset-password`, { token, newPassword });
+  }
 
   logout() {
     localStorage.removeItem(this.TOKEN_KEY);
