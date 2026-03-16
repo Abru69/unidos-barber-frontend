@@ -8,19 +8,49 @@ import { AuthService } from '../core/services/auth.service';
   selector: 'app-reset-password',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  styleUrls: ['./login.scss'], // 👈 Reutilizamos los estilos del login
   template: `
-    <div class="auth-container">
-      <h2>Nueva Contraseña</h2>
-      <div *ngIf="error" class="error-alert">{{ error }}</div>
+    <div class="auth-page">
+      <div class="auth-page__deco" aria-hidden="true">
+        <div class="deco-content">
+          <span class="deco-icon">✂</span>
+          <h2>Un nuevo <em>comienzo</em></h2>
+          <p>Elige una contraseña segura que puedas recordar.</p>
+          <div class="deco-lines"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+      <div class="auth-page__form-wrap">
+        <div class="auth-card">
+          <div class="auth-card__header">
+            <a routerLink="/" class="auth-card__logo">✂ Unidos <em>Barber</em></a>
+            <h1>Nueva Contraseña</h1>
+            <p *ngIf="token">Por favor, ingresa tu nueva contraseña a continuación.</p>
+          </div>
 
-      <form [formGroup]="form" (ngSubmit)="submit()">
-        <label>Nueva Contraseña (mínimo 6 caracteres)</label>
-        <input type="password" formControlName="password">
-        
-        <button type="submit" [disabled]="loading">
-          {{ loading ? 'Guardando...' : 'Restablecer contraseña' }}
-        </button>
-      </form>
+          <div *ngIf="error" class="auth-card__error">⚠ {{ error }}</div>
+
+          <form [formGroup]="form" (ngSubmit)="submit()" novalidate *ngIf="token">
+            <div class="form-field">
+              <label for="password">Nueva Contraseña (mínimo 6 caracteres)</label>
+              <div class="input-wrap">
+                <input id="password" [type]="showPass ? 'text' : 'password'" formControlName="password" placeholder="••••••••" />
+                <button type="button" class="toggle-pass" (click)="showPass = !showPass">{{ showPass ? '🙈' : '👁' }}</button>
+              </div>
+              <span class="error-msg" *ngIf="password.touched && password.hasError('required')">La contraseña es obligatoria</span>
+              <span class="error-msg" *ngIf="password.touched && password.hasError('minlength')">Debe tener al menos 6 caracteres</span>
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--full" [disabled]="loading">
+              <span *ngIf="!loading">Restablecer contraseña</span>
+              <span *ngIf="loading" class="spinner"></span>
+            </button>
+          </form>
+
+          <p class="auth-card__footer">
+            <a routerLink="/auth/login">Volver al login</a>
+          </p>
+        </div>
+      </div>
     </div>
   `
 })
@@ -29,6 +59,7 @@ export class ResetPassword implements OnInit {
   loading = false; 
   error = ''; 
   token = '';
+  showPass = false;
 
   constructor(
     private fb: FormBuilder, 
@@ -42,7 +73,6 @@ export class ResetPassword implements OnInit {
   }
 
   ngOnInit() {
-    // Extraemos el token de la URL, por ejemplo: misitio.com/auth/reset-password?token=12345
     this.route.queryParams.subscribe(params => {
       this.token = params['token'];
       if (!this.token) {
@@ -55,7 +85,7 @@ export class ResetPassword implements OnInit {
   get password() { return this.form.get('password')!; }
 
   submit() {
-    if (this.form.invalid || !this.token) return;
+    if (this.form.invalid || !this.token) { this.form.markAllAsTouched(); return; }
     this.loading = true; this.error = '';
     
     this.auth.resetPassword(this.token, this.password.value).subscribe({

@@ -8,27 +8,51 @@ import { AuthService } from '../core/services/auth.service';
   selector: 'app-forgot-password',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  styleUrls: ['./login.scss'], // 👈 Reutilizamos los estilos del login
   template: `
-    <div class="auth-container">
-      <h2>Recuperar Contraseña</h2>
-      <p>Ingresa tu correo y te enviaremos un enlace para restablecerla.</p>
-      
-      <div *ngIf="successMessage" class="success-alert">{{ successMessage }}</div>
-      <div *ngIf="error" class="error-alert">{{ error }}</div>
+    <div class="auth-page">
+      <div class="auth-page__deco" aria-hidden="true">
+        <div class="deco-content">
+          <span class="deco-icon">✂</span>
+          <h2>Recupera tu <em>acceso</em></h2>
+          <p>Te ayudaremos a volver para tu próximo corte.</p>
+          <div class="deco-lines"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+      <div class="auth-page__form-wrap">
+        <div class="auth-card">
+          <div class="auth-card__header">
+            <a routerLink="/" class="auth-card__logo">✂ Unidos <em>Barber</em></a>
+            <h1>¿Olvidaste tu contraseña?</h1>
+            <p>Ingresa tu correo y te enviaremos un enlace de recuperación.</p>
+          </div>
 
-      <form [formGroup]="form" (ngSubmit)="submit()" *ngIf="!successMessage">
-        <label>Correo Electrónico</label>
-        <input type="email" formControlName="email" placeholder="ejemplo@correo.com">
-        
-        <button type="submit" [disabled]="loading">
-          {{ loading ? 'Enviando...' : 'Enviar enlace' }}
-        </button>
-      </form>
-      
-      <a routerLink="/auth/login">Volver al login</a>
+          <div *ngIf="successMessage" class="auth-card__error" style="background: rgba(76,175,125,0.1); border-color: rgba(76,175,125,0.3); color: var(--color-success);">
+            ✓ {{ successMessage }}
+          </div>
+          <div *ngIf="error" class="auth-card__error">⚠ {{ error }}</div>
+
+          <form [formGroup]="form" (ngSubmit)="submit()" novalidate *ngIf="!successMessage">
+            <div class="form-field">
+              <label for="email">Correo electrónico</label>
+              <input id="email" type="email" formControlName="email" placeholder="tu@correo.com" />
+              <span class="error-msg" *ngIf="email.touched && email.hasError('required')">El correo es obligatorio</span>
+              <span class="error-msg" *ngIf="email.touched && email.hasError('email')">Ingresa un correo válido</span>
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--full" [disabled]="loading">
+              <span *ngIf="!loading">Enviar enlace</span>
+              <span *ngIf="loading" class="spinner"></span>
+            </button>
+          </form>
+
+          <p class="auth-card__footer">
+            ¿Recordaste tu contraseña? <a routerLink="/auth/login">Volver a iniciar sesión</a>
+          </p>
+        </div>
+      </div>
     </div>
-  `, // Nota: Puedes mover este HTML a un archivo forgot-password.html y darle estilos en un .scss si prefieres
-  styleUrls: ['./forgot-password.scss']
+  `
 })
 export class ForgotPassword {
   form: FormGroup;
@@ -50,7 +74,7 @@ export class ForgotPassword {
     
     this.auth.forgotPassword(this.email.value).subscribe({
       next: () => {
-        this.successMessage = 'Si el correo existe, hemos enviado un enlace de recuperación.';
+        this.successMessage = 'Si el correo existe, hemos enviado un enlace de recuperación. Revisa tu bandeja de entrada o la carpeta de spam.';
         this.loading = false;
       },
       error: (e) => { 
