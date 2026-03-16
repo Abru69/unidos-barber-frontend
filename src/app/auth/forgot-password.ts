@@ -27,7 +27,8 @@ import { AuthService } from '../core/services/auth.service';
       
       <a routerLink="/auth/login">Volver al login</a>
     </div>
-  ` // Nota: Puedes mover este HTML a un archivo forgot-password.html y darle estilos en un .scss si prefieres
+  `, // Nota: Puedes mover este HTML a un archivo forgot-password.html y darle estilos en un .scss si prefieres
+  styleUrls: ['./forgot-password.scss']
 })
 export class ForgotPassword {
   form: FormGroup;
