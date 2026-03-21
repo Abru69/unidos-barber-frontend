@@ -1,20 +1,14 @@
 <header class="navbar" [class.navbar--scrolled]="scrolled()">
   <div class="navbar__inner page-container">
-
-    <!-- Logo -->
     <a routerLink="/" class="navbar__logo" (click)="closeMenu()">
       <span class="navbar__logo-icon">✂</span>
-      <span class="navbar__logo-text">
-        Unidos <em>Barber</em>
-      </span>
+      <span class="navbar__logo-text">Unidos <em>Barber</em></span>
     </a>
 
-    <!-- Nav links (desktop) -->
     <nav class="navbar__links">
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Inicio</a>
       <a routerLink="/services" routerLinkActive="active">Servicios</a>
       <a routerLink="/gallery" routerLinkActive="active">Galería</a>
-
       @if (user()) {
         <a routerLink="/appointments" routerLinkActive="active">Mis Citas</a>
         @if (isAdmin()) {
@@ -23,14 +17,34 @@
       }
     </nav>
 
-    <!-- Actions (desktop) -->
     <div class="navbar__actions">
+      <!-- Theme toggle -->
+      <button class="theme-toggle" (click)="theme.toggle()" [title]="isDark() ? 'Modo claro' : 'Modo oscuro'">
+        @if (isDark()) {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        } @else {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+          </svg>
+        }
+      </button>
+
       @if (!user()) {
         <a routerLink="/auth/login" class="btn btn--ghost btn--sm">Entrar</a>
         <a routerLink="/appointments/book" class="btn btn--primary btn--sm">Reservar</a>
       } @else {
         <a routerLink="/appointments/book" class="btn btn--primary btn--sm">+ Reservar</a>
-        <div class="navbar__avatar" [routerLink]="['/profile']" title="Mi perfil">
+        <div class="navbar__avatar" [routerLink]="['/profile']">
           @if (user()?.fotoUrl) {
             <img [src]="user()!.fotoUrl" [alt]="user()!.nombre" />
           } @else {
@@ -41,23 +55,41 @@
       }
     </div>
 
-    <!-- Hamburger (mobile) -->
-    <button class="navbar__burger" (click)="toggleMenu()" [class.open]="menuOpen()" aria-label="Menú">
-      <span></span><span></span><span></span>
-    </button>
+    <div class="navbar__burger-wrap">
+      <!-- Theme toggle mobile -->
+      <button class="theme-toggle" (click)="theme.toggle()" [title]="isDark() ? 'Modo claro' : 'Modo oscuro'">
+        @if (isDark()) {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        } @else {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+          </svg>
+        }
+      </button>
+
+      <button class="navbar__burger" (click)="toggleMenu()" [class.open]="menuOpen()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </div>
 
-  <!-- Mobile menu -->
   <div class="navbar__mobile" [class.navbar__mobile--open]="menuOpen()">
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" (click)="closeMenu()">Inicio</a>
     <a routerLink="/services" routerLinkActive="active" (click)="closeMenu()">Servicios</a>
     <a routerLink="/gallery" routerLinkActive="active" (click)="closeMenu()">Galería</a>
-
     @if (user()) {
       <a routerLink="/appointments" routerLinkActive="active" (click)="closeMenu()">Mis Citas</a>
-      @if (isAdmin()) {
-        <a routerLink="/admin/dashboard" (click)="closeMenu()">Panel Admin</a>
-      }
+      @if (isAdmin()) { <a routerLink="/admin/dashboard" (click)="closeMenu()">Panel Admin</a> }
       <hr>
       <a routerLink="/profile" (click)="closeMenu()">Mi Perfil</a>
       <button (click)="logout()">Cerrar sesión</button>

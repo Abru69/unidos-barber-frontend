@@ -253,3 +253,51 @@ a, button {
     padding: 48px 0;
   }
 }
+
+// ── Light theme (Beige cálido con dorado) ───────────────────
+[data-theme="light"] {
+  --color-bg:        #f5f0e8;
+  --color-surface:   #ede8df;
+  --color-surface2:  #e4ddd2;
+  --color-border:    #d4cdc0;
+  --color-gold:      #b8860b;
+  --color-gold-light:#c9960c;
+  --color-text:      #1a1612;
+  --color-muted:     #6b6358;
+  --color-danger:    #cc3333;
+  --color-success:   #2d7a4a;
+  --shadow-gold: 0 0 24px rgba(184, 134, 11, 0.2);
+
+  // Scrollbar
+  ::-webkit-scrollbar-track { background: var(--color-bg); }
+  ::-webkit-scrollbar-thumb { background: var(--color-border); }
+
+  // Form inputs
+  .form-field input, .form-field select, .form-field textarea {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border-color: var(--color-border);
+  }
+
+  // Cards
+  .card { background: var(--color-surface); }
+
+  // Navbar scrolled
+  .navbar--scrolled {
+    background: rgba(245, 240, 232, 0.97) !important;
+  }
+
+  // Bottom nav
+  .bottom-nav {
+    background: var(--color-surface);
+    border-top-color: var(--color-border);
+  }
+
+  // Date/time inputs
+  input[type="date"], input[type="time"] {
+    color-scheme: light;
+  }
+
+  // Select
+  select { background: var(--color-surface); color: var(--color-text); }
+}
