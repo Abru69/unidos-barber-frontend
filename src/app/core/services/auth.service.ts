@@ -39,7 +39,7 @@ export class AuthService {
   }
 
   resetPassword(token: string, newPassword: string) {
-    return this.http.post<{ message: string }>(`${environment.apiUrl}/auth/reset-password`, { token, newPassword });
+    return this.http.post<{ message: string }>(`${environment.apiUrl}/auth/reset-password`, { token, password: newPassword });
   }
 
   logout() {
