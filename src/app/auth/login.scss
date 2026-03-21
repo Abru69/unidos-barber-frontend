@@ -38,3 +38,33 @@
   strong { display: block; color: var(--color-success); margin-bottom: 4px; }
   p { font-size: 0.85rem; color: var(--color-muted); margin: 0; }
 }
+
+@media (max-width: 768px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+    min-height: 100svh;
+
+    &__form-wrap {
+      padding: 32px 20px;
+      align-items: flex-start;
+      padding-top: 100px;
+    }
+  }
+
+  .auth-card {
+    max-width: 100%;
+
+    &__header h1 { font-size: 1.6rem; }
+  }
+
+  .btn--full {
+    padding: 16px;
+    font-size: 1rem;
+    min-height: 52px;
+  }
+
+  .form-field input, .form-field select, .form-field textarea {
+    padding: 14px 16px;
+    min-height: 52px;
+  }
+}
