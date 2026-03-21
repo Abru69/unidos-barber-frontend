@@ -18,3 +18,23 @@
 .btn--full { width: 100%; justify-content: center; padding: 14px; }
 .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(0,0,0,0.3); border-top-color: #0f0f0f; border-radius: 50%; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+.success-box {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: rgba(76,175,125,0.1);
+  border: 1px solid rgba(76,175,125,0.3);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-bottom: 20px;
+
+  span {
+    font-size: 1.2rem;
+    color: var(--color-success);
+    flex-shrink: 0;
+  }
+
+  strong { display: block; color: var(--color-success); margin-bottom: 4px; }
+  p { font-size: 0.85rem; color: var(--color-muted); margin: 0; }
+}

@@ -9,6 +9,8 @@ export const routes: Routes = [
   { path: 'auth', children: [
     { path: 'login', loadComponent: () => import('./auth/login').then(m => m.Login) },
     { path: 'register', loadComponent: () => import('./auth/register').then(m => m.Register) },
+      { path: 'forgot-password', loadComponent: () => import('./auth/forgot-password').then(m => m.ForgotPassword) },
+      { path: 'reset-password', loadComponent: () => import('./auth/reset-password').then(m => m.ResetPassword) },
     { path: 'forgot-password', loadComponent: () => import('./auth/forgot-password').then(m => m.ForgotPassword) },
     { path: 'reset-password', loadComponent: () => import('./auth/reset-password').then(m => m.ResetPassword) },
   ]},
