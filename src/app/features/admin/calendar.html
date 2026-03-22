@@ -1,0 +1,64 @@
+<div class="calendar-page">
+  <div class="page-container">
+
+    <div class="cal-header">
+      <div>
+        <a routerLink="/admin/dashboard" class="back-link">← Dashboard</a>
+        <h1>Calendario <span>Semanal</span></h1>
+        <p class="month-label">{{ monthYear }}</p>
+      </div>
+      <div class="cal-header__actions">
+        <div class="week-nav">
+          <button class="week-btn" (click)="prevWeek()">‹</button>
+          <span class="week-label">{{ weekLabel() }}</span>
+          <button class="week-btn" (click)="nextWeek()">›</button>
+        </div>
+        <button class="btn btn--outline btn--sm" (click)="goToday()">Hoy</button>
+      </div>
+    </div>
+
+    <div class="cal-summary">
+      <div class="cal-summary__item">
+        <span class="cal-summary__value">{{ totalWeek() }}</span>
+        <span class="cal-summary__label">Citas esta semana</span>
+      </div>
+      <div class="cal-summary__item" *ngFor="let d of days()">
+        <span class="cal-summary__value" [class.today]="d.isToday">{{ d.appointments.length }}</span>
+        <span class="cal-summary__label">{{ d.label }}</span>
+      </div>
+    </div>
+
+    <div class="cal-skeleton" *ngIf="loading">
+      <div class="skeleton-col" *ngFor="let i of [1,2,3,4,5,6,7]"></div>
+    </div>
+
+    <div class="cal-grid" *ngIf="!loading">
+      <div class="cal-day" *ngFor="let day of days()"
+        [class.cal-day--today]="day.isToday"
+        [class.cal-day--weekend]="day.isWeekend"
+        [class.cal-day--empty]="day.appointments.length === 0">
+
+        <div class="cal-day__header">
+          <span class="cal-day__label">{{ day.label }}</span>
+          <span class="cal-day__num" [class.cal-day__num--today]="day.isToday">{{ day.dayNum }}</span>
+          <span class="cal-day__count" *ngIf="day.appointments.length > 0">{{ day.appointments.length }}</span>
+        </div>
+
+        <div class="cal-day__body">
+          <div class="cal-empty" *ngIf="day.appointments.length === 0">
+            <span>{{ day.isWeekend ? '🔒' : '—' }}</span>
+          </div>
+
+          <div class="cal-appt" *ngFor="let a of day.appointments"
+            [style.border-left-color]="statusColor(a.estado)">
+            <span class="cal-appt__time">{{ formatTime(a.startDatetime) }}</span>
+            <span class="cal-appt__service">{{ a.service?.nombre }}</span>
+            <span class="cal-appt__client">{{ a.user?.nombre ?? 'Cliente' }}</span>
+            <span [class]="statusClass(a.estado)" class="cal-appt__badge">{{ a.estado }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
