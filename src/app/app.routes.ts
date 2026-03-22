@@ -27,6 +27,7 @@ export const routes: Routes = [
     { path: 'gallery', loadComponent: () => import('./features/admin/manage-gallery').then(m => m.ManageGallery) },
     { path: 'hours', loadComponent: () => import('./features/admin/manage-hours').then(m => m.ManageHours) },
         { path: 'calendar', loadComponent: () => import('./features/admin/calendar').then(m => m.Calendar) },
+        { path: 'stats', loadComponent: () => import('./features/admin/stats').then(m => m.Stats) },
   ]},
   { path: '**', redirectTo: '' },
 ];
