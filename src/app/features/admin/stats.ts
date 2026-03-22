@@ -51,8 +51,8 @@ export class Stats implements OnInit {
   completadas       = computed(() => this.filtered().filter(a => a.estado === 'COMPLETADA').length);
   pendientes        = computed(() => this.filtered().filter(a => a.estado === 'PENDIENTE').length);
   confirmadas       = computed(() => this.filtered().filter(a => a.estado === 'CONFIRMADA').length);
-  ingresos          = computed(() => this.filtered().filter(a => a.estado === 'COMPLETADA').reduce((s, a) => s + (a.service?.precio ?? 0), 0));
-  prevIngresos      = computed(() => this.prevFiltered().filter(a => a.estado === 'COMPLETADA').reduce((s, a) => s + (a.service?.precio ?? 0), 0));
+  ingresos          = computed(() => this.filtered().filter(a => a.estado === 'COMPLETADA').reduce((s, a) => s + (Number(a.service?.precio ?? 0)), 0));
+  prevIngresos      = computed(() => this.prevFiltered().filter(a => a.estado === 'COMPLETADA').reduce((s, a) => s + (Number(a.service?.precio ?? 0)), 0));
   prevCitas         = computed(() => this.prevFiltered().length);
   diffIngresos      = computed(() => { const p = this.prevIngresos(); return p === 0 ? null : Math.round(((this.ingresos() - p) / p) * 100); });
   diffCitas         = computed(() => { const p = this.prevCitas(); return p === 0 ? null : Math.round(((this.totalCitas() - p) / p) * 100); });
@@ -63,7 +63,7 @@ export class Stats implements OnInit {
     const map = new Map<string, ServiceStat>();
     for (const a of this.filtered()) {
       const nombre = a.service?.nombre ?? 'Desconocido';
-      const precio = a.service?.precio ?? 0;
+      const precio = Number(a.service?.precio ?? 0);
       const prev   = map.get(nombre) ?? { nombre, count: 0, ingresos: 0, pct: 0 };
       map.set(nombre, { ...prev, count: prev.count + 1, ingresos: prev.ingresos + precio });
     }
@@ -79,7 +79,7 @@ export class Stats implements OnInit {
     for (const a of this.filtered()) {
       const idx = (new Date(a.startDatetime).getDay() + 6) % 7;
       counts[idx]++;
-      ingrs[idx] += a.service?.precio ?? 0;
+      ingrs[idx] += Number(a.service?.precio ?? 0);
     }
     return labels.map((label, i) => ({ label, count: counts[i], ingresos: ingrs[i] }));
   });
