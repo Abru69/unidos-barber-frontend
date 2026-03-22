@@ -1,0 +1,184 @@
+<div class="stats-page">
+  <div class="page-container">
+
+    <div class="stats-header">
+      <div>
+        <a routerLink="/admin/dashboard" class="back-link">← Dashboard</a>
+        <h1>Estadísticas <span>& Ingresos</span></h1>
+        <p>Análisis del rendimiento del negocio</p>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="period-tabs">
+      <button class="period-tab" [class.active]="activeTab() === 'semana'" (click)="setTab('semana')">Esta semana</button>
+      <button class="period-tab" [class.active]="activeTab() === 'mes'" (click)="setTab('mes')">Este mes</button>
+      <button class="period-tab" [class.active]="activeTab() === 'total'" (click)="setTab('total')">Histórico</button>
+    </div>
+
+    <div class="stats-skeleton" *ngIf="loading">
+      <div class="sk-card" *ngFor="let i of [1,2,3,4]"></div>
+    </div>
+
+    <ng-container *ngIf="!loading">
+
+      <!-- KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-card--gold">
+          <div class="kpi-card__icon">💰</div>
+          <div class="kpi-card__info">
+            <span class="kpi-card__value">${{ ingresos() | number }}</span>
+            <span class="kpi-card__label">Ingresos reales</span>
+            <span class="kpi-card__sub">Citas completadas {{ periodLabel }}</span>
+          </div>
+          <div class="kpi-card__diff" *ngIf="diffIngresos() !== null && activeTab() === 'mes'"
+            [class.positive]="diffIngresos()! >= 0" [class.negative]="diffIngresos()! < 0">
+            {{ diffIngresos()! >= 0 ? '▲' : '▼' }} {{ diffIngresos()! | abs }}% vs {{ prevMonthLabel }}
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-card__icon">📅</div>
+          <div class="kpi-card__info">
+            <span class="kpi-card__value">{{ totalCitas() }}</span>
+            <span class="kpi-card__label">Total citas</span>
+            <span class="kpi-card__sub">{{ periodLabel }}</span>
+          </div>
+          <div class="kpi-card__diff" *ngIf="diffCitas() !== null && activeTab() === 'mes'"
+            [class.positive]="diffCitas()! >= 0" [class.negative]="diffCitas()! < 0">
+            {{ diffCitas()! >= 0 ? '▲' : '▼' }} {{ diffCitas()! | abs }}% vs {{ prevMonthLabel }}
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-card__icon">✓</div>
+          <div class="kpi-card__info">
+            <span class="kpi-card__value">{{ tasaCompletadas() }}%</span>
+            <span class="kpi-card__label">Tasa de completadas</span>
+            <span class="kpi-card__sub">{{ completadas() }} de {{ totalCitas() }} citas</span>
+          </div>
+          <div class="kpi-progress">
+            <div class="kpi-progress__fill" [style.width.%]="tasaCompletadas()"></div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-card__icon">🎯</div>
+          <div class="kpi-card__info">
+            <span class="kpi-card__value">${{ ticketPromedio() }}</span>
+            <span class="kpi-card__label">Ticket promedio</span>
+            <span class="kpi-card__sub">Por cita completada</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado de citas -->
+      <div class="section-grid">
+
+        <!-- Servicios más populares -->
+        <div class="stat-card">
+          <div class="stat-card__header">
+            <h2>✂ Servicios más populares</h2>
+            <span class="stat-card__period">{{ periodLabel }}</span>
+          </div>
+          <div class="empty-state" *ngIf="serviceStats().length === 0">Sin datos aún</div>
+          <div class="service-bars" *ngIf="serviceStats().length > 0">
+            <div class="service-bar" *ngFor="let s of serviceStats(); let i = index">
+              <div class="service-bar__info">
+                <span class="service-bar__name">{{ s.nombre }}</span>
+                <span class="service-bar__count">{{ s.count }} cita(s) · ${{ s.ingresos }}</span>
+              </div>
+              <div class="service-bar__track">
+                <div class="service-bar__fill" [style.width.%]="s.pct" [class.top]="i === 0"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clientes -->
+        <div class="stat-card">
+          <div class="stat-card__header">
+            <h2>👥 Clientes</h2>
+            <span class="stat-card__period">{{ periodLabel }}</span>
+          </div>
+          <div class="client-donut">
+            <div class="donut-wrap">
+              <svg viewBox="0 0 100 100" class="donut">
+                <circle cx="50" cy="50" r="38" fill="none" stroke="var(--color-border)" stroke-width="12"/>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="var(--color-gold)" stroke-width="12"
+                  [attr.stroke-dasharray]="clientStats().pctNuevos * 2.39 + ' 239'"
+                  stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#4caf7d" stroke-width="12"
+                  [attr.stroke-dasharray]="clientStats().pctRec * 2.39 + ' 239'"
+                  [attr.stroke-dashoffset]="-(clientStats().pctNuevos * 2.39)" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+              </svg>
+              <div class="donut-center">
+                <span class="donut-total">{{ clientStats().nuevos + clientStats().recurrentes }}</span>
+                <span class="donut-label">clientes</span>
+              </div>
+            </div>
+            <div class="client-legend">
+              <div class="legend-item">
+                <span class="legend-dot" style="background: var(--color-gold)"></span>
+                <div>
+                  <strong>{{ clientStats().nuevos }}</strong>
+                  <span>Nuevos ({{ clientStats().pctNuevos }}%)</span>
+                </div>
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot" style="background: #4caf7d"></span>
+                <div>
+                  <strong>{{ clientStats().recurrentes }}</strong>
+                  <span>Recurrentes ({{ clientStats().pctRec }}%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Citas por día de la semana -->
+      <div class="stat-card stat-card--full">
+        <div class="stat-card__header">
+          <h2>📊 Citas por día de la semana</h2>
+          <span class="stat-card__period">{{ periodLabel }}</span>
+        </div>
+        <div class="day-chart">
+          <div class="day-bar" *ngFor="let d of dayStats()">
+            <div class="day-bar__track">
+              <div class="day-bar__fill" [style.height]="(maxDayCount() > 0 ? (d.count / maxDayCount() * 100) : 0) + '%'">
+                <span class="day-bar__value" *ngIf="d.count > 0">{{ d.count }}</span>
+              </div>
+            </div>
+            <span class="day-bar__label">{{ d.label }}</span>
+            <span class="day-bar__income" *ngIf="d.ingresos > 0">${{ d.ingresos }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado detallado -->
+      <div class="stat-card stat-card--full">
+        <div class="stat-card__header"><h2>📋 Resumen de estados</h2></div>
+        <div class="status-summary">
+          <div class="status-item">
+            <span class="badge badge--pendiente">PENDIENTE</span>
+            <span class="status-count">{{ pendientes() }}</span>
+            <div class="status-bar"><div class="status-bar__fill status-bar__fill--pending" [style.width.%]="totalCitas() > 0 ? (pendientes() / totalCitas() * 100) : 0"></div></div>
+          </div>
+          <div class="status-item">
+            <span class="badge badge--confirmada">CONFIRMADA</span>
+            <span class="status-count">{{ confirmadas() }}</span>
+            <div class="status-bar"><div class="status-bar__fill status-bar__fill--confirmed" [style.width.%]="totalCitas() > 0 ? (confirmadas() / totalCitas() * 100) : 0"></div></div>
+          </div>
+          <div class="status-item">
+            <span class="badge badge--completada">COMPLETADA</span>
+            <span class="status-count">{{ completadas() }}</span>
+            <div class="status-bar"><div class="status-bar__fill status-bar__fill--completed" [style.width.%]="totalCitas() > 0 ? (completadas() / totalCitas() * 100) : 0"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+  </div>
+</div>
