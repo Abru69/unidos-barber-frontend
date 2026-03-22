@@ -5,56 +5,90 @@
       <div>
         <a routerLink="/admin/dashboard" class="back-link">← Dashboard</a>
         <h1>Calendario <span>Semanal</span></h1>
-        <p class="month-label">{{ monthYear }}</p>
       </div>
       <div class="cal-header__actions">
-        <div class="week-nav">
-          <button class="week-btn" (click)="prevWeek()">‹</button>
-          <span class="week-label">{{ weekLabel() }}</span>
-          <button class="week-btn" (click)="nextWeek()">›</button>
+        <div class="month-nav">
+          <button class="nav-btn" (click)="prevMonth()">‹</button>
+          <span class="month-label">{{ monthLabel() }}</span>
+          <button class="nav-btn" (click)="nextMonth()">›</button>
         </div>
         <button class="btn btn--outline btn--sm" (click)="goToday()">Hoy</button>
       </div>
     </div>
 
-    <div class="cal-summary">
-      <div class="cal-summary__item">
-        <span class="cal-summary__value">{{ totalWeek() }}</span>
-        <span class="cal-summary__label">Citas esta semana</span>
-      </div>
-      <div class="cal-summary__item" *ngFor="let d of days()">
-        <span class="cal-summary__value" [class.today]="d.isToday">{{ d.appointments.length }}</span>
-        <span class="cal-summary__label">{{ d.label }}</span>
-      </div>
+    <div class="cal-stats">
+      <div class="cal-stat"><span class="val">{{ totalMonth() }}</span><span class="lbl">Citas este mes</span></div>
+      <div class="cal-stat cal-stat--legend"><span class="dot dot--confirmed"></span><span>Confirmada</span></div>
+      <div class="cal-stat cal-stat--legend"><span class="dot dot--pending"></span><span>Pendiente</span></div>
+      <div class="cal-stat cal-stat--legend"><span class="dot dot--blocked">🔒</span><span>Bloqueado</span></div>
     </div>
 
     <div class="cal-skeleton" *ngIf="loading">
-      <div class="skeleton-col" *ngFor="let i of [1,2,3,4,5,6,7]"></div>
+      <div class="skeleton-row" *ngFor="let i of [1,2,3,4,5]"></div>
     </div>
 
-    <div class="cal-grid" *ngIf="!loading">
-      <div class="cal-day" *ngFor="let day of days()"
-        [class.cal-day--today]="day.isToday"
-        [class.cal-day--weekend]="day.isWeekend"
-        [class.cal-day--empty]="day.appointments.length === 0">
+    <div class="cal-month" *ngIf="!loading" [class.has-selection]="selectedWeek()">
+      <!-- Header días -->
+      <div class="cal-weekdays">
+        <div class="cal-weekday" *ngFor="let d of weekDayLabels">{{ d }}</div>
+      </div>
 
-        <div class="cal-day__header">
-          <span class="cal-day__label">{{ day.label }}</span>
-          <span class="cal-day__num" [class.cal-day__num--today]="day.isToday">{{ day.dayNum }}</span>
-          <span class="cal-day__count" *ngIf="day.appointments.length > 0">{{ day.appointments.length }}</span>
+      <!-- Semanas -->
+      <div class="cal-week" *ngFor="let week of weeks()"
+        [class.cal-week--selected]="weekKey(week) === selectedWeek()"
+        [class.cal-week--dimmed]="selectedWeek() && weekKey(week) !== selectedWeek()"
+        (click)="selectWeek(week)">
+
+        <div class="cal-week__row">
+          <div class="cal-cell" *ngFor="let day of week"
+            [class.cal-cell--today]="day.isToday"
+            [class.cal-cell--other-month]="!day.isCurrentMonth"
+            [class.cal-cell--blocked]="day.isBlocked && day.isCurrentMonth"
+            [class.cal-cell--has-appts]="day.appointments.length > 0">
+
+            <div class="cal-cell__num">
+              <span [class.today-badge]="day.isToday">{{ day.dayNum }}</span>
+              <span class="lock-icon" *ngIf="day.isBlocked && day.isCurrentMonth">🔒</span>
+              <span class="appt-dot" *ngIf="day.appointments.length > 0 && !day.isBlocked">{{ day.appointments.length }}</span>
+            </div>
+
+            <div class="cal-cell__appts" *ngIf="day.appointments.length > 0 && weekKey(week) !== selectedWeek()">
+              <div class="appt-pip" *ngFor="let a of day.appointments.slice(0,3)"
+                [style.background]="statusColor(a.estado)"></div>
+              <span class="appt-more" *ngIf="day.appointments.length > 3">+{{ day.appointments.length - 3 }}</span>
+            </div>
+          </div>
         </div>
 
-        <div class="cal-day__body">
-          <div class="cal-empty" *ngIf="day.appointments.length === 0">
-            <span>{{ day.isWeekend ? '🔒' : '—' }}</span>
+        <!-- Detalle de semana expandida -->
+        <div class="cal-week__detail" *ngIf="weekKey(week) === selectedWeek()" [class.animating]="animating()">
+          <div class="week-detail-header">
+            <span class="week-range">{{ weekRangeLabel(week) }}</span>
+            <span class="week-count">{{ weekApptCount(week) }} cita(s)</span>
+            <button class="close-btn" (click)="closeWeek(); $event.stopPropagation()">✕</button>
           </div>
+          <div class="week-detail-grid">
+            <div class="week-detail-day" *ngFor="let day of week"
+              [class.week-detail-day--today]="day.isToday"
+              [class.week-detail-day--blocked]="day.isBlocked">
 
-          <div class="cal-appt" *ngFor="let a of day.appointments"
-            [style.border-left-color]="statusColor(a.estado)">
-            <span class="cal-appt__time">{{ formatTime(a.startDatetime) }}</span>
-            <span class="cal-appt__service">{{ a.service?.nombre }}</span>
-            <span class="cal-appt__client">{{ a.user?.nombre ?? 'Cliente' }}</span>
-            <span [class]="statusClass(a.estado)" class="cal-appt__badge">{{ a.estado }}</span>
+              <div class="week-detail-day__header">
+                <span class="wd-label">{{ day.date.toLocaleDateString('es-MX', {weekday:'short'}) }}</span>
+                <span class="wd-num" [class.today-badge]="day.isToday">{{ day.dayNum }}</span>
+                <span *ngIf="day.isBlocked" class="wd-blocked">🔒 Cerrado</span>
+                <span *ngIf="!day.isBlocked && day.appointments.length === 0" class="wd-free">Libre</span>
+              </div>
+
+              <div class="week-detail-day__appts">
+                <div class="week-appt" *ngFor="let a of day.appointments"
+                  [style.border-left-color]="statusColor(a.estado)">
+                  <span class="wa-time">{{ formatTime(a.startDatetime) }}</span>
+                  <span class="wa-service">{{ a.service?.nombre }}</span>
+                  <span class="wa-client">{{ a.user?.nombre ?? 'Cliente' }}</span>
+                  <span [class]="statusClass(a.estado)">{{ a.estado }}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
