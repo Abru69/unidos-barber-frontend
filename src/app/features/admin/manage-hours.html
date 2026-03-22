@@ -10,6 +10,7 @@
     <div class="hours-skeleton" *ngIf="loading"><div class="skeleton-row" *ngFor="let i of [1,2,3,4,5,6,7]"></div></div>
     <form [formGroup]="form" (ngSubmit)="submit()" *ngIf="!loading">
       <div class="saved-toast" *ngIf="saved">✓ Horarios guardados correctamente</div>
+      <div class="error-toast" *ngIf="error">⚠ {{ error }}</div>
       <div class="hours-card">
         <div class="hours-table__header"><span>Día</span><span>Activo</span><span>Apertura</span><span>Cierre</span><span>Intervalo</span></div>
         <div formArrayName="dias">
